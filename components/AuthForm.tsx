@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../lib/firebaseClient';
 
 type Props = {
   mode: 'login' | 'register';
-  action: string;
+  after?: string; // redirect path
 };
 
-export default function AuthForm({ mode, action }: Props) {
+export default function AuthForm({ mode, after = '/' }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -17,17 +19,16 @@ export default function AuthForm({ mode, action }: Props) {
     setLoading(true);
     setMsg(null);
     try {
-      const body: any = { email, password };
-      if (mode === 'register') body.name = name;
-      const res = await fetch(action, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Request failed');
-      setMsg(data?.message || 'Success!');
-    } catch (err:any) {
+      if (mode === 'register') {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        if (name) { await updateProfile(cred.user, { displayName: name }); }
+        setMsg('Account created!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        setMsg('Signed in!');
+      }
+      setTimeout(() => { window.location.href = after; }, 600);
+    } catch (err: any) {
       setMsg(err?.message || 'Error');
     } finally {
       setLoading(false);
