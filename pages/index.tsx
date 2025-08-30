@@ -1,89 +1,31 @@
-import Navbar from '../components/Navbar';
-
 export default function Home() {
+  // INLINE NAVBAR (for diagnosis) — no imports needed
   return (
     <main className="container">
-      <Navbar />
-      <section className="grid-2" style={{alignItems:"center", marginTop:"20px"}}>
-        <div>
-          <div className="badge"><span className="dot"></span> API‑powered unlocking</div>
-          <h1 className="hero-title">Check IMEI & Unlock your device</h1>
-          <p className="hero-sub">Fast, simple, professional. Verify devices with ImeiDB and order unlocks via DHRU‑compatible providers — all in one place.</p>
-          <div className="row">
-            <a className="button" href="/check">Start IMEI Check</a>
-            <a className="button ghost" href="/unlock">Order Unlock</a>
-          </div>
+      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 16px',background:'#fff',border:'1px solid #e5e7eb',borderRadius:12,margin:'12px 0'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <img src="/unlocktap-icon.svg" alt="UnlockTap" width={28} height={28} />
+          <strong>UnlockTap</strong>
+          <span style={{marginLeft:10,fontSize:12,color:'#6b7280'}}>DEBUG-INLINE</span>
         </div>
-        <aside className="card">
-          <h3>Live demo (UI)</h3>
-          <input className="input" placeholder="Enter IMEI (15 digits)" defaultValue="351234567890123" />
-          <div style={{height:'12px'}} />
-          <select className="select">
-            <option>Select unlock service</option>
-            <option>iPhone Factory Unlock</option>
-            <option>Samsung Unlock</option>
-          </select>
-          <div style={{height:'12px'}} />
-          <a className="button secondary" href="/unlock">Place Order</a>
-        </aside>
-      </section>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <a href="/">Home</a>
+          <a href="/check">Check IMEI</a>
+          <a href="/unlock">Order Unlock</a>
+          <a href="/status">Order Status</a>
+          <a href="/auth/login" style={{padding:'6px 10px',border:'1px solid #e5e7eb',borderRadius:6,background:'#f9fafb'}}>Login</a>
+          <a href="/auth/register" style={{padding:'6px 10px',border:'1px solid #e5e7eb',borderRadius:6,background:'#f9fafb'}}>Register</a>
+        </div>
+      </nav>
 
-      <section style={{marginTop:'40px'}}>
+      <section style={{marginTop:20}}>
+        <h1 className="hero-title">Check IMEI & Unlock your device</h1>
+        <p className="hero-sub">This index.tsx replaces old content to verify navbar rendering.</p>
         <div className="row">
-          <div className="col card">
-            <h3>Reliable IMEI checks</h3>
-            <p className="muted">Accurate device details powered by ImeiDB APIs.</p>
-          </div>
-          <div className="col card">
-            <h3>Easy unlock ordering</h3>
-            <p className="muted">DHRU‑compatible providers with automated status tracking.</p>
-          </div>
-          <div className="col card">
-            <h3>Clean, modern UI</h3>
-            <p className="muted">Mobile‑first layout with clear forms and helpful feedback.</p>
-          </div>
+          <a className="button" href="/check">Start IMEI Check</a>
+          <a className="button ghost" href="/unlock">Order Unlock</a>
         </div>
       </section>
-
-      <section style={{marginTop:'40px'}}>
-        <h2>Pricing</h2>
-        <div className="pricing">
-          <div className="tier">
-            <h3>Starter</h3>
-            <div className="price">$0.99/check</div>
-            <ul>
-              <li>IMEI basic details</li>
-              <li>Email receipt</li>
-              <li>Support in 24h</li>
-            </ul>
-            <a className="button" href="/check">Get started</a>
-          </div>
-          <div className="tier featured">
-            <h3>Pro</h3>
-            <div className="price">$9.99/unlock</div>
-            <ul>
-              <li>Priority processing</li>
-              <li>Live status updates</li>
-              <li>Refund guarantee</li>
-            </ul>
-            <a className="button" href="/unlock">Choose Pro</a>
-          </div>
-          <div className="tier">
-            <h3>Enterprise</h3>
-            <div className="price">Custom</div>
-            <ul>
-              <li>Bulk checks & orders</li>
-              <li>API access</li>
-              <li>Dedicated support</li>
-            </ul>
-            <a className="button secondary" href="/contact">Contact sales</a>
-          </div>
-        </div>
-      </section>
-
-      <footer className="footer">
-        © UnlockTap — modern IMEI & unlock platform
-      </footer>
     </main>
   );
 }
