@@ -2,12 +2,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebaseClient';
 
-type Props = {
-  mode: 'login' | 'register';
-  after?: string; // redirect path after success
-};
-
-export default function AuthForm({ mode, after = '/' }: Props) {
+export default function AuthForm({ mode, after = '/' }: { mode: 'login' | 'register', after?: string }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,50 +31,29 @@ export default function AuthForm({ mode, after = '/' }: Props) {
   }
 
   return (
-    <section style={{maxWidth:720, margin:'0 auto'}}>
-      <div className="card">
-        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16}}>
-          <div>
-            <div className="badge"><span className="dot"></span> Secure Authentication</div>
-            <h2 style={{marginTop:10}}>{mode === 'login' ? 'Sign in to UnlockTap' : 'Create your UnlockTap account'}</h2>
-            <p className="muted" style={{marginTop:6}}>
-              {mode === 'login' ? 'Welcome back — please enter your credentials.' : 'It’s quick: your name, email and a password.'}
-            </p>
-          </div>
-          <img src="/unlocktap-logo.svg" alt="UnlockTap" style={{height:36}}/>
+    <form className="card" onSubmit={onSubmit} style={{maxWidth:520, margin:'0 auto'}}>
+      <h2 style={{marginBottom:8}}>{mode === 'login' ? 'Sign in' : 'Create an account'}</h2>
+      {mode === 'register' && (
+        <div style={{marginBottom:12}}>
+          <label style={{display:'block',fontSize:14,marginBottom:6}}>Full name</label>
+          <input className="input" placeholder="Jane Doe" value={name} onChange={e=>setName(e.target.value)} required />
         </div>
-
-        <form onSubmit={onSubmit}>
-          {mode === 'register' && (
-            <div style={{marginBottom:12}}>
-              <label style={{display:'block',fontSize:14,marginBottom:6}}>Full name</label>
-              <input className="input" placeholder="Jane Doe" value={name} onChange={e=>setName(e.target.value)} required />
-            </div>
-          )}
-
-          <div style={{marginBottom:12}}>
-            <label style={{display:'block',fontSize:14,marginBottom:6}}>Email</label>
-            <input className="input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required />
-          </div>
-
-          <div style={{marginBottom:16}}>
-            <label style={{display:'block',fontSize:14,marginBottom:6}}>Password</label>
-            <input className="input" type="password" placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6} />
-            <small className="muted">Minimum 6 characters.</small>
-          </div>
-
-          <div style={{display:'flex',gap:12,alignItems:'center'}}>
-            <button className="button" type="submit" disabled={loading}>
-              {loading ? 'Please wait…' : (mode === 'login' ? 'Sign in' : 'Create account')}
-            </button>
-            <a className="button ghost" href={mode === 'login' ? '/auth/register' : '/auth/login'}>
-              {mode === 'login' ? 'Create account' : 'Have an account? Sign in'}
-            </a>
-          </div>
-
-          {msg && <div style={{marginTop:12}} className="muted">{msg}</div>}
-        </form>
+      )}
+      <div style={{marginBottom:12}}>
+        <label style={{display:'block',fontSize:14,marginBottom:6}}>Email</label>
+        <input className="input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required />
       </div>
-    </section>
+      <div style={{marginBottom:16}}>
+        <label style={{display:'block',fontSize:14,marginBottom:6}}>Password</label>
+        <input className="input" type="password" placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6} />
+      </div>
+      <button className="button" disabled={loading} type="submit">
+        {loading ? 'Please wait…' : (mode === 'login' ? 'Sign in' : 'Create account')}
+      </button>
+      <a href={mode === 'login' ? '/auth/register' : '/auth/login'} className="button ghost" style={{marginLeft:10}}>
+        {mode === 'login' ? 'Create account' : 'Have an account? Sign in'}
+      </a>
+      {msg && <div style={{marginTop:12}} className="muted">{msg}</div>}
+    </form>
   );
 }
