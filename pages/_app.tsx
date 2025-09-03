@@ -1,15 +1,10 @@
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
-
 import { AuthProvider } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import PromoTicker from '../components/PromoTicker';
 import HeroSlider from '../components/HeroSlider';
 
-/**
- * Drop-in _app.tsx that mounts Navbar + PromoTicker + HeroSlider
- * above your pages. If you already have extra providers, keep them.
- */
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
