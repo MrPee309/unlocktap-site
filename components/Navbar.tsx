@@ -5,27 +5,49 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 16px',background:'#fff',borderBottom:'1px solid #eee'}}>
-      <div style={{display:'flex',alignItems:'center',gap:8}}>
-        <img src="/unlocktap-icon.svg" alt="UnlockTap" width={28} height={28} />
-        <strong>UnlockTap</strong>
-        <span style={{marginLeft:8,fontSize:12,color:'#6b7280'}}>PAGES-NAV</span>
-      </div>
-      <div style={{display:'flex',alignItems:'center',gap:16}}>
-        <Link href="/">Home</Link>
-        <Link href="/check">Check IMEI</Link>
-        <Link href="/unlock">Order Unlock</Link>
-        <Link href="/status">Order Status</Link>
+    <header style={{position:'sticky',top:0,zIndex:40,background:'#fff',borderBottom:'1px solid #eee',backdropFilter:'blur(6px)'}}>
+      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 16px',maxWidth:1080,margin:'0 auto'}}>
+        {/* Brand */}
+        <Link href="/" className="brand" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
+          <img src="/unlocktap-logo.svg" alt="UnlockTap" width={28} height={28} />
+          <strong style={{color:'#111'}}>UnlockTap</strong>
+        </Link>
+
+        {/* Single dropdown menu */}
         <div style={{position:'relative'}}>
-          <button onClick={()=>setOpen(v=>!v)} style={{padding:'6px 10px',border:'1px solid #e5e7eb',borderRadius:6,background:'#f9fafb'}}>Account ▾</button>
+          <button
+            onClick={() => setOpen(v => !v)}
+            aria-haspopup="true"
+            aria-expanded={open}
+            style={{padding:'8px 12px',border:'1px solid #e5e7eb',borderRadius:8,background:'#0b5cff',color:'#fff',fontWeight:600}}
+          >
+            Menu ▾
+          </button>
+
           {open && (
-            <div style={{position:'absolute',right:0,top:'100%',background:'#fff',border:'1px solid #e5e7eb',borderRadius:8,boxShadow:'0 8px 24px rgba(0,0,0,0.12)',minWidth:180,zIndex:50}}>
-              <a href="/auth/login" style={{display:'block',padding:'10px 14px',textDecoration:'none',color:'#111827'}}>🔑 Login</a>
-              <a href="/auth/register" style={{display:'block',padding:'10px 14px',textDecoration:'none',color:'#111827'}}>📝 Register</a>
+            <div
+              onMouseLeave={() => setOpen(false)}
+              style={{position:'absolute',right:0,top:'calc(100% + 8px)',background:'#fff',border:'1px solid #e5e7eb',borderRadius:10,boxShadow:'0 10px 24px rgba(0,0,0,0.12)',width:220,padding:8}}
+            >
+              <Link href="/" onClick={() => setOpen(false)} style={itemStyle}>Home</Link>
+              <Link href="/check" onClick={() => setOpen(false)} style={itemStyle}>Check IMEI</Link>
+              <Link href="/unlock" onClick={() => setOpen(false)} style={itemStyle}>Order Unlock</Link>
+              <Link href="/status" onClick={() => setOpen(false)} style={itemStyle}>Order Status</Link>
+              <hr style={{margin:'6px 0',border:0,borderTop:'1px solid #eee'}} />
+              <Link href="/auth/login" onClick={() => setOpen(false)} style={itemStyle}>🔑 Login</Link>
+              <Link href="/auth/register" onClick={() => setOpen(false)} style={itemStyle}>📝 Register</Link>
             </div>
           )}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
+
+const itemStyle: React.CSSProperties = {
+  display:'block',
+  padding:'10px 12px',
+  borderRadius:8,
+  color:'#111',
+  textDecoration:'none'
+};
