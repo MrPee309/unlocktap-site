@@ -1,31 +1,42 @@
-import React from 'react';
-
 /**
- * Thin horizontal promo ticker that scrolls text left-to-right.
- * Place it under the Navbar in _app.tsx
+ * A thin horizontal ticker bar for announcements (no CSS framework).
  */
 export default function PromoTicker() {
-  const msg = "🔥 UnlockTap.pro — Fast IMEI checks • DHRU-compatible unlock orders • Real‑time status tracking.  ";
+  const bar: React.CSSProperties = {
+    width: '100%',
+    background: '#1e293b',
+    color: '#e2e8f0',
+    fontWeight: 700,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+  };
+
+  const inner: React.CSSProperties = {
+    display: 'inline-block',
+    padding: '8px 0',
+    animation: 'scrollLeft 18s linear infinite',
+  };
+
+  const styleTag = (
+    <style>{`
+      @keyframes scrollLeft {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .no-motion { animation: none !important; }
+      }
+    `}</style>
+  );
 
   return (
-    <div style={{background:'#0b63f6', color:'#fff', overflow:'hidden', borderBottom:'1px solid rgba(255,255,255,0.2)'}}>
-      <div className="promo-track" style={trackStyle}>
-        <div style={{whiteSpace:'nowrap', padding:'6px 0', fontSize:13, opacity:0.95}}>
-          {msg.repeat(10)}
-        </div>
+    <div style={bar}>
+      {styleTag}
+      <div className="no-motion" style={inner}>
+        🔓 Fast IMEI checks • DHRU-compatible unlock orders • Optional Firebase logging • Launch promo: contact us for API onboarding
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        🔐 Secure & privacy-first • 24/7 endpoints • Built on Next.js + Vercel
       </div>
-      <style>{`
-        @keyframes promoScroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
     </div>
   );
 }
-
-const trackStyle: React.CSSProperties = {
-  display:'inline-block',
-  minWidth:'200%',
-  animation:'promoScroll 18s linear infinite',
-};
