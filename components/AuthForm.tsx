@@ -1,59 +1,82 @@
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { auth } from '../lib/firebaseClient';
 
-export default function AuthForm({ mode, after = '/' }: { mode: 'login' | 'register', after?: string }) {
-  const [name, setName] = useState('');
+type Props = {
+  mode: 'login' | 'register';
+  after?: string; // where to redirect after success
+};
+
+export default function AuthForm({ mode, after = '/' }: Props) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setMsg(null);
     try {
       if (mode === 'register') {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        if (name) await updateProfile(cred.user, { displayName: name });
-        setMsg('Account created! Redirecting…');
+        await createUserWithEmailAndPassword(auth, email, password);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        setMsg('Signed in! Redirecting…');
       }
-      setTimeout(() => { window.location.href = after; }, 600);
-    } catch (err:any) {
-      setMsg(err?.message || 'Authentication error');
+      router.push(after);
+    } catch (err: any) {
+      setError(err?.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form className="card" onSubmit={onSubmit} style={{maxWidth:520, margin:'0 auto'}}>
-      <h2 style={{marginBottom:8}}>{mode === 'login' ? 'Sign in' : 'Create an account'}</h2>
-      {mode === 'register' && (
-        <div style={{marginBottom:12}}>
-          <label style={{display:'block',fontSize:14,marginBottom:6}}>Full name</label>
-          <input className="input" placeholder="Jane Doe" value={name} onChange={e=>setName(e.target.value)} required />
-        </div>
-      )}
-      <div style={{marginBottom:12}}>
-        <label style={{display:'block',fontSize:14,marginBottom:6}}>Email</label>
-        <input className="input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required />
+    <form onSubmit={handleSubmit} style={{ maxWidth: 420, margin: '0 auto' }}>
+      <h2 style={{ marginBottom: 16 }}>{mode === 'register' ? 'Create account' : 'Sign in'}</h2>
+      <div style={{ display: 'grid', gap: 12 }}>
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 4 }}>Email</div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d0d5dd' }}
+          />
+        </label>
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 4 }}>Password</div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d0d5dd' }}
+          />
+        </label>
+
+        {error && (
+          <div style={{ color: '#b42318', background: '#fee4e2', border: '1px solid #fda29b', padding: 10, borderRadius: 8 }}>
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #1d4ed8', background: '#2563eb', color: '#fff', fontWeight: 600 }}
+        >
+          {loading ? 'Please wait…' : (mode === 'register' ? 'Register' : 'Login')}
+        </button>
       </div>
-      <div style={{marginBottom:16}}>
-        <label style={{display:'block',fontSize:14,marginBottom:6}}>Password</label>
-        <input className="input" type="password" placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6} />
-      </div>
-      <button className="button" disabled={loading} type="submit">
-        {loading ? 'Please wait…' : (mode === 'login' ? 'Sign in' : 'Create account')}
-      </button>
-      <a href={mode === 'login' ? '/auth/register' : '/auth/login'} className="button ghost" style={{marginLeft:10}}>
-        {mode === 'login' ? 'Create account' : 'Have an account? Sign in'}
-      </a>
-      {msg && <div style={{marginTop:12}} className="muted">{msg}</div>}
     </form>
   );
 }
