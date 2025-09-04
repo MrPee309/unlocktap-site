@@ -1,81 +1,66 @@
+// components/AuthForm.tsx
+"use client";
+
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebaseClient';
 
 type Props = {
-  mode: 'login' | 'register';
-  after?: string; // where to redirect after success
+  mode?: 'login' | 'register';
+  after?: string;
 };
 
-export default function AuthForm({ mode, after = '/' }: Props) {
-  const router = useRouter();
+export default function AuthForm({ mode = 'login', after = '/' }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
+    setError(null);
     try {
-      if (mode === 'register') {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
+      if (mode === 'login') {
         await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
       }
-      router.push(after);
+      window.location.href = after;
     } catch (err: any) {
-      setError(err?.message || 'Authentication failed');
+      setError(err?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 420, margin: '0 auto' }}>
-      <h2 style={{ marginBottom: 16 }}>{mode === 'register' ? 'Create account' : 'Sign in'}</h2>
-      <div style={{ display: 'grid', gap: 12 }}>
-        <label>
-          <div style={{ fontSize: 14, marginBottom: 4 }}>Email</div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d0d5dd' }}
-          />
-        </label>
-        <label>
-          <div style={{ fontSize: 14, marginBottom: 4 }}>Password</div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d0d5dd' }}
-          />
-        </label>
-
-        {error && (
-          <div style={{ color: '#b42318', background: '#fee4e2', border: '1px solid #fda29b', padding: 10, borderRadius: 8 }}>
-            {error}
-          </div>
-        )}
-
+    <form onSubmit={onSubmit} style={{maxWidth: 400, margin: '0 auto'}}>
+      <div style={{display:'flex', flexDirection:'column', gap:12}}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{padding:10, borderRadius:8, border:'1px solid #ddd'}}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{padding:10, borderRadius:8, border:'1px solid #ddd'}}
+        />
         <button
           type="submit"
           disabled={loading}
-          style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #1d4ed8', background: '#2563eb', color: '#fff', fontWeight: 600 }}
+          style={{padding:'10px 14px', borderRadius:8, border:'none', background:'#2563eb', color:'#fff'}}
         >
-          {loading ? 'Please wait…' : (mode === 'register' ? 'Register' : 'Login')}
+          {loading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Create Account')}
         </button>
+        {error && <p style={{color:'crimson', fontSize:13}}>{error}</p>}
       </div>
     </form>
   );
