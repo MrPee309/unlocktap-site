@@ -1,20 +1,21 @@
+// components/AuthForm.tsx
 "use client";
 
 import { useState } from "react";
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../lib/firebaseClient";
 
 type Props = {
-  mode?: 'login' | 'register';
+  mode?: "login" | "register";
   after?: string;
 };
 
-export default function AuthForm({ mode = 'login', after }: Props) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function AuthForm({ mode = "login", after = "/" }: Props) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,41 +23,51 @@ export default function AuthForm({ mode = 'login', after }: Props) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
-      if (mode === 'login') {
+      if (mode === "login") {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
       if (after) window.location.href = after;
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message || "Auth error");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <input 
-        type="email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        placeholder="Email" 
-        required 
+    <form onSubmit={onSubmit} style={{ maxWidth: 360, margin: "1rem auto" }}>
+      <h3 style={{ marginBottom: 12 }}>
+        {mode === "login" ? "Login" : "Create account"}
+      </h3>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        style={{ width: "100%", padding: 10, marginBottom: 10 }}
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Password" 
-        required 
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        style={{ width: "100%", padding: 10, marginBottom: 10 }}
       />
-      <button type="submit" disabled={loading}>
-        {mode === 'login' ? 'Login' : 'Register'}
+      {error && (
+        <div style={{ color: "red", marginBottom: 10, fontSize: 12 }}>{error}</div>
+      )}
+      <button
+        type="submit"
+        disabled={loading}
+        style={{ width: "100%", padding: 10 }}
+      >
+        {loading ? "Please wait..." : mode === "login" ? "Login" : "Register"}
       </button>
-      {error && <p>{error}</p>}
     </form>
   );
 }
