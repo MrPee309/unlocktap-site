@@ -1,6 +1,6 @@
 // pages/api/check/imei.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { checkIMEI } from "../../../lib/providers/imeidb";
+import { checkIMEI } from "../../../lib/imeidb";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const imei = (req.query.imei || req.body?.imei || "").toString().trim();
