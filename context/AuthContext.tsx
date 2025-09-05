@@ -1,11 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { auth } from "../lib/firebaseClient";
-import { onAuthStateChanged, type User } from "firebase/auth";
 
-type Ctx = { 
-  user: User | null; 
+type Ctx = {
+  user: User | null;
   loading: boolean;
 };
 
