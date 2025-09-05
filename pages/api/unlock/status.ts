@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { DhruClient } from '../../../lib/providers/dhru';
+import { DhruClient } from '../../../lib/dhru';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
