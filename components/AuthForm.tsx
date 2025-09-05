@@ -2,16 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebaseClient";
 
-type Props = {
-  mode?: "login" | "register";
-  after?: string;
-};
+type Props = { mode?: "login" | "register"; after?: string; };
 
 export default function AuthForm({ mode = "login", after = "/" }: Props) {
   const [email, setEmail] = useState("");
@@ -39,9 +33,6 @@ export default function AuthForm({ mode = "login", after = "/" }: Props) {
 
   return (
     <form onSubmit={onSubmit} style={{ maxWidth: 360, margin: "1rem auto" }}>
-      <h3 style={{ marginBottom: 12 }}>
-        {mode === "login" ? "Login" : "Create account"}
-      </h3>
       <input
         type="email"
         placeholder="Email"
@@ -58,14 +49,8 @@ export default function AuthForm({ mode = "login", after = "/" }: Props) {
         required
         style={{ width: "100%", padding: 10, marginBottom: 10 }}
       />
-      {error && (
-        <div style={{ color: "red", marginBottom: 10, fontSize: 12 }}>{error}</div>
-      )}
-      <button
-        type="submit"
-        disabled={loading}
-        style={{ width: "100%", padding: 10 }}
-      >
+      {error && <div style={{ color: "crimson", marginBottom: 8, fontSize: 12 }}>{error}</div>}
+      <button type="submit" disabled={loading} style={{ width: "100%", padding: 10 }}>
         {loading ? "Please wait..." : mode === "login" ? "Login" : "Register"}
       </button>
     </form>
