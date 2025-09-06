@@ -8,7 +8,6 @@ import { auth } from '../lib/firebase'
 import { useAuth } from '../context/AuthContext'
 
 type Item = { href: string; label: string }
-
 const mainItems: Item[] = [
   { href: '/', label: 'Home' },
   { href: '/check-imei', label: 'Check IMEI' },
@@ -25,21 +24,9 @@ export default function TopNav() {
       const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
       setOpen(false)
-    } catch (e) {
-      console.error('Login failed', e)
-      alert('Login failed.')
-    }
+    } catch (e) { console.error(e); alert('Login failed') }
   }
-
-  async function handleLogout() {
-    try {
-      await signOut(auth)
-      setOpen(false)
-    } catch (e) {
-      console.error('Logout failed', e)
-      alert('Logout failed.')
-    }
-  }
+  async function handleLogout() { try { await signOut(auth); setOpen(false) } catch (e) { console.error(e) } }
 
   return (
     <nav className="w-full border-b border-gray-200 bg-white/80 backdrop-blur">
@@ -50,28 +37,14 @@ export default function TopNav() {
         </Link>
 
         <div className="relative">
-          <button
-            onClick={() => setOpen(o => !o)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50 active:scale-[.99]"
-            aria-expanded={open}
-            aria-haspopup="menu"
-          >
+          <button onClick={() => setOpen(o => !o)} className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50" aria-expanded={open} aria-haspopup="menu">
             Menu ▾
           </button>
-
           {open && (
-            <div
-              className="absolute right-0 mt-2 w-56 rounded-md border border-gray-200 bg-white shadow-lg overflow-hidden z-50"
-              role="menu"
-            >
+            <div className="absolute right-0 mt-2 w-56 rounded-md border border-gray-200 bg-white shadow-lg overflow-hidden z-50" role="menu">
               <div className="py-1">
                 {mainItems.map(it => (
-                  <Link
-                    key={it.href}
-                    href={it.href}
-                    className="block px-3 py-2 hover:bg-gray-50"
-                    onClick={() => setOpen(false)}
-                  >
+                  <Link key={it.href} href={it.href} className="block px-3 py-2 hover:bg-gray-50" onClick={() => setOpen(false)}>
                     {it.label}
                   </Link>
                 ))}
@@ -80,23 +53,15 @@ export default function TopNav() {
               <div className="py-1">
                 {!loading && !user && (
                   <>
-                    <button onClick={handleLogin} className="w-full text-left block px-3 py-2 hover:bg-gray-50">
-                      Login (Google)
-                    </button>
-                    <Link href="/register" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setOpen(false)}>
-                      Register
-                    </Link>
+                    <button onClick={handleLogin} className="w-full text-left block px-3 py-2 hover:bg-gray-50">Login (Google)</button>
+                    <Link href="/register" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setOpen(false)}>Register</Link>
                   </>
                 )}
                 {!loading && user && (
                   <>
                     <div className="px-3 py-2 text-sm text-gray-500 truncate">Signed in as {user.email}</div>
-                    <Link href="/account" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setOpen(false)}>
-                      My Account
-                    </Link>
-                    <button onClick={handleLogout} className="w-full text-left block px-3 py-2 hover:bg-gray-50">
-                      Logout
-                    </button>
+                    <Link href="/account" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setOpen(false)}>My Account</Link>
+                    <button onClick={handleLogout} className="w-full text-left block px-3 py-2 hover:bg-gray-50">Logout</button>
                   </>
                 )}
               </div>
