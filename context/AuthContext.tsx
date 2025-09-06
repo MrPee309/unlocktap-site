@@ -4,10 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
-type Ctx = {
-  user: User | null;
-  loading: boolean;
-};
+type Ctx = { user: User | null; loading: boolean };
 
 const AuthCtx = createContext<Ctx>({ user: null, loading: true });
 
@@ -26,6 +23,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthCtx.Provider value={{ user, loading }}>{children}</AuthCtx.Provider>;
 }
 
-export function useAuth() {
-  return useContext(AuthCtx);
-}
+export function useAuth() { return useContext(AuthCtx); }
