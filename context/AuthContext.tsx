@@ -1,26 +1,35 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "../lib/firebaseClient";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { auth } from "../lib/firebase";
 
-type Ctx = { user: User | null; loading: boolean };
+type Ctx = {
+  user: User | null;
+  loading: boolean;
+};
 
 const AuthCtx = createContext<Ctx>({ user: null, loading: true });
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
     });
-    return unsub;
+    return () => unsubscribe();
   }, []);
 
-  return <AuthCtx.Provider value={{ user, loading }}>{children}</AuthCtx.Provider>;
+  return (
+    <AuthCtx.Provider value={{ user, loading }}>
+      {children}
+    </AuthCtx.Provider>
+  );
 }
 
-export function useAuth() { return useContext(AuthCtx); }
+export function useAuth() {
+  return useContext(AuthCtx);
+}
