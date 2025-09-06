@@ -1,11 +1,22 @@
-export interface ImeidbResult { success: boolean; [k: string]: any; }
-export async function checkImei(imei: string): Promise<ImeidbResult> {
-  const apiKey = process.env.IMEIDB_API_KEY;
-  const base = process.env.IMEIDB_BASE_URL || "https://api.imeidb.xyz/v1/check";
-  if (!apiKey) throw new Error("Missing env IMEIDB_API_KEY");
-  const res = await fetch(`${base}?imei=${encodeURIComponent(imei)}`, {
-    headers: { "Authorization": `Bearer ${apiKey}` }
-  });
-  if (!res.ok) return { success: false, status: res.status, message: await res.text() } as any;
-  return await res.json();
+// lib/imeidb.ts
+export async function imeidbCheck(imei: string) {
+  const base = process.env.IMEIDB_API_BASE
+  const key = process.env.IMEIDB_API_KEY
+  if (!base || !key) throw new Error('IMEIDB env vars missing')
+
+  const url = `${base}/check`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+    },
+    body: JSON.stringify({ imei }),
+    cache: 'no-store',
+  })
+  if (!res.ok) {
+    const txt = await res.text()
+    throw new Error(`IMEIDB error: ${res.status} ${txt}`)
+  }
+  return res.json()
 }

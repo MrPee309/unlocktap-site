@@ -1,28 +1,57 @@
-export type DhruParams = Record<string, any>;
-export type DhruResponse = any;
+// lib/dhru.ts
+/**
+ * Minimal DHRU API client template.
+ * Many providers expose JSON or SOAP-like endpoints.
+ * Adjust the payloads to your provider's docs.
+ */
+export async function dhruPlaceOrder(serviceId: string, imei: string, extra: Record<string, any> = {}) {
+  const base = process.env.DHRU_BASE_URL
+  const username = process.env.DHRU_USERNAME
+  const apiKey = process.env.DHRU_API_KEY
+  if (!base || !username || !apiKey) throw new Error('DHRU env vars missing')
 
-function ensureEnv(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing env: ${name}`);
-  return v;
+  const res = await fetch(base, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'place_order',
+      username,
+      api_key: apiKey,
+      service_id: serviceId,
+      imei,
+      ...extra,
+    }),
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    const txt = await res.text()
+    throw new Error(`DHRU error: ${res.status} ${txt}`)
+  }
+  return res.json()
 }
 
-export async function dhruCall(action: string, params: DhruParams = {}): Promise<DhruResponse> {
-  const url = ensureEnv("DHRU_API_URL");
-  const username = ensureEnv("DHRU_USERNAME");
-  const apiaccesskey = ensureEnv("DHRU_API_KEY");
-  const payload = { username, apiaccesskey, action, responsetype: "json", ...params };
+export async function dhruOrderStatus(orderId: string) {
+  const base = process.env.DHRU_BASE_URL
+  const username = process.env.DHRU_USERNAME
+  const apiKey = process.env.DHRU_API_KEY
+  if (!base || !username || !apiKey) throw new Error('DHRU env vars missing')
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const text = await res.text();
-  try { return JSON.parse(text); }
-  catch { throw new Error("DHRU returned non-JSON. Configure panel to JSON."); }
+  const res = await fetch(base, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'order_status',
+      username,
+      api_key: apiKey,
+      order_id: orderId,
+    }),
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    const txt = await res.text()
+    throw new Error(`DHRU error: ${res.status} ${txt}`)
+  }
+  return res.json()
 }
-
-export async function dhruServiceList() { return dhruCall("listservices"); }
-export async function dhruPlaceOrder(params: DhruParams) { return dhruCall("placeorder", params); }
-export async function dhruOrderStatus(orderId: string | number) { return dhruCall("orderstatus", { orderid: orderId }); }
