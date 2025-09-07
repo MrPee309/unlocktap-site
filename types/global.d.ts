@@ -1,9 +1,4 @@
-// types/global.d.ts
-declare module "firebase/app";
-declare module "firebase/auth";
-declare module "firebase/firestore";
-declare module "firebase/storage";
-declare module "firebase/functions";
-
-// Some adapters/libraries don't ship types
+// Keep only third‑party modules that truly lack types.
+// Firebase ships excellent types — do NOT declare these,
+// otherwise TypeScript may treat them as namespaces and break.
 declare module "xml2js";
