@@ -1,27 +1,19 @@
-
 // lib/imeidb.ts
-export async function checkImei(imei: string) {
+export async function imeidbCheck(imei: string) {
   const base = process.env.IMEIDB_API_BASE;
-  const key  = process.env.IMEIDB_API_KEY;
-  if (!base || !key) throw new Error("IMEIDB env missing");
+  const key = process.env.IMEIDB_API_KEY;
 
-  const url = `${base}/check`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${key}`,
-    },
-    body: JSON.stringify({ imei }),
-    cache: "no-store",
-  });
+  if (!base || !key) {
+    throw new Error("IMEIDB API config is missing");
+  }
+
+  const url = `${base}/check?imei=${encodeURIComponent(imei)}&apikey=${encodeURIComponent(key)}`;
+  const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`IMEIDB error: ${res.status} ${txt}`);
+    const txt = await res.text().catch(() => "");
+    throw new Error(`IMEIDB error: ${res.status} - ${txt}`);
   }
+
   return res.json();
 }
-
-// (Opsyonèl) kenbe ansyen non an pou tout eventualite:
-export { checkImei as imeidbCheck };
