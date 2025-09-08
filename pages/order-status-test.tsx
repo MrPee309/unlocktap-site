@@ -11,7 +11,7 @@ export default function OrderStatusTest() {
     e.preventDefault()
     setLoading(true)
     try {
-      const auth = getAuth(app)
+      const auth = auth
       const tok = await auth.currentUser?.getIdToken()
       if (!tok) { setOut({ ok:false, error:'Please login first (Google in menu)' }); setLoading(false); return }
       const r = await fetch('/api/order-status', {
