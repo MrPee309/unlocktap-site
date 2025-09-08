@@ -1,29 +1,48 @@
-// lib/imeidb.ts
-// Single, canonical export: `checkImei`
-// Any code should import with:  import { checkImei } from "@/lib/imeidb";
 
-export async function checkImei(imei: string) {
+// lib/imeidb.ts
+
+export interface ImeidbOk {
+  success: true;
+  data: unknown;
+}
+export interface ImeidbErr {
+  success: false;
+  error: string;
+}
+export type ImeidbResult = ImeidbOk | ImeidbErr;
+
+/**
+ * IMEIDB checker via env vars:
+ *  - IMEIDB_API_BASE (eg. https://sickw.com)
+ *  - IMEIDB_API_KEY  (eg. OD7-LTD-...-XAO)
+ */
+export async function imeidbCheck(imei: string): Promise<ImeidbResult> {
   const base = process.env.IMEIDB_API_BASE;
-  const key = process.env.IMEIDB_API_KEY;
+  const key  = process.env.IMEIDB_API_KEY;
+
   if (!base || !key) {
-    throw new Error("IMEIDB env vars missing");
+    return { success: false, error: "Missing IMEIDB_API_BASE or IMEIDB_API_KEY" };
+  }
+  if (!imei || imei.length < 10) {
+    return { success: false, error: "Invalid IMEI" };
   }
 
-  const url = `${base}/check`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${key}`,
-    },
-    body: JSON.stringify({ imei }),
-    cache: "no-store",
-  });
+  const url = `${base.replace(/\/+$,'')}/api.php?format=json&key=${encodeURIComponent(key)}&imei=${encodeURIComponent(imei)}&service=CHECK`;
+
+  const res = await fetch(url, { method: "GET", cache: "no-store" });
 
   if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`IMEIDB error: ${res.status} - ${txt}`);
+    const txt = await res.text().catch(() => "");
+    return { success: false, error: `IMEIDB HTTP ${res.status}: ${txt}` };
   }
 
-  return res.json();
+  const json = await res.json().catch(() => null);
+  if (!json) {
+    return { success: false, error: "IMEIDB: invalid JSON" };
+  }
+  return { success: true, data: json };
 }
+
+// ---- exports to satisfy all imports elsewhere ----
+export { imeidbCheck as checkImei };   // alias pou lè lòt fichye ap rele checkImei
+export default imeidbCheck;            // default export si yo itilize li konsa
