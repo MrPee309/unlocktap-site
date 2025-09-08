@@ -1,11 +1,16 @@
 // lib/imeidb.ts
-export async function imeidbCheck(imei: string) {
+// Single, canonical export: `checkImei`
+// Any code should import with:  import { checkImei } from "@/lib/imeidb";
+
+export async function checkImei(imei: string) {
   const base = process.env.IMEIDB_API_BASE;
   const key = process.env.IMEIDB_API_KEY;
+  if (!base || !key) {
+    throw new Error("IMEIDB env vars missing");
+  }
 
-  if (!base || !key) throw new Error("IMEIDB env vars missing");
-
-  const res = await fetch(`${base}/check`, {
+  const url = `${base}/check`;
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,8 +21,8 @@ export async function imeidbCheck(imei: string) {
   });
 
   if (!res.ok) {
-    const msg = await res.text();
-    throw new Error(`IMEIDB error: ${res.status} - ${msg}`);
+    const txt = await res.text();
+    throw new Error(`IMEIDB error: ${res.status} - ${txt}`);
   }
 
   return res.json();
