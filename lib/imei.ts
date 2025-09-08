@@ -1,5 +1,8 @@
 // lib/imei.ts
-// Barrel re-export, so you can import from "@/lib/imei" if you prefer.
-// Example:  import { checkImei } from "@/lib/imei";
+// ✅ Adapter file to stop 'has no exported member' errors.
+// Use this path in API routes: import { checkImei } from "../../lib/imei"
+// It forwards to lib/imeidb.ts and provides all forms of export.
 
-export { checkImei } from "./imeidb";
+export { imeidbCheck as checkImei } from "./imeidb";
+export { imeidbCheck as default } from "./imeidb";
+export * from "./imeidb";
