@@ -1,4 +1,3 @@
-
 // lib/imeidb.ts
 
 export interface ImeidbOk {
@@ -27,22 +26,27 @@ export async function imeidbCheck(imei: string): Promise<ImeidbResult> {
     return { success: false, error: "Invalid IMEI" };
   }
 
-  const url = `${base.replace(/\/+$,'')}/api.php?format=json&key=${encodeURIComponent(key)}&imei=${encodeURIComponent(imei)}&service=CHECK`;
+  const url = `${base.replace(/\/+$/, '')}/api.php?format=json&key=${encodeURIComponent(key)}&imei=${encodeURIComponent(imei)}&service=CHECK`;
 
-  const res = await fetch(url, { method: "GET", cache: "no-store" });
+  try {
+    const res = await fetch(url, { method: "GET", cache: "no-store" });
 
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    return { success: false, error: `IMEIDB HTTP ${res.status}: ${txt}` };
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      return { success: false, error: `IMEIDB HTTP ${res.status}: ${txt}` };
+    }
+
+    const json = await res.json().catch(() => null);
+    if (!json) {
+      return { success: false, error: "IMEIDB: invalid JSON" };
+    }
+
+    return { success: true, data: json };
+  } catch (err: any) {
+    return { success: false, error: `IMEIDB fetch failed: ${err?.message || err}` };
   }
-
-  const json = await res.json().catch(() => null);
-  if (!json) {
-    return { success: false, error: "IMEIDB: invalid JSON" };
-  }
-  return { success: true, data: json };
 }
 
 // ---- exports to satisfy all imports elsewhere ----
-export { imeidbCheck as checkImei };   // alias pou lè lòt fichye ap rele checkImei
-export default imeidbCheck;            // default export si yo itilize li konsa
+export { imeidbCheck as checkImei };
+export default imeidbCheck;
