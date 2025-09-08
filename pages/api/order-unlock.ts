@@ -1,7 +1,7 @@
 // pages/api/order-unlock.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { dhruPlaceOrder } from "../../lib/dhru";
-import { db } from "../../lib/firebaseAdmin";  // Firestore (Admin SDK)
+import { db } from "../../lib/firebaseAdmin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -9,29 +9,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.setHeader("Allow", ["POST"]);
       return res.status(405).json({ success: false, error: "Method Not Allowed" });
     }
-
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     const { imei, serviceId, userId } = body;
 
-    if (!imei || typeof imei !== "string") {
-      return res.status(400).json({ success: false, error: "Missing IMEI" });
-    }
-    if (!serviceId || typeof serviceId !== "string") {
-      return res.status(400).json({ success: false, error: "Missing serviceId" });
-    }
+    if (!imei || typeof imei !== "string") return res.status(400).json({ success: false, error: "Missing IMEI" });
+    if (!serviceId || typeof serviceId !== "string") return res.status(400).json({ success: false, error: "Missing serviceId" });
 
-    // Place order with supplier (note: dhruPlaceOrder expects (imei, serviceId))
     const placed = await dhruPlaceOrder(imei, serviceId);
 
-    // Save to Firestore (orders collection)
     await db.collection("orders").add({
-      userId: userId || null,
-      imei,
-      serviceId,
-      provider: "DHRU",
-      providerOrder: placed,
-      status: "placed",
-      createdAt: new Date().toISOString(),
+      userId: userId || null, imei, serviceId, provider: "DHRU",
+      providerOrder: placed, status: "placed", createdAt: new Date().toISOString(),
     });
 
     return res.status(200).json({ success: true, data: placed });

@@ -8,18 +8,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.setHeader("Allow", ["POST"]);
       return res.status(405).json({ success: false, error: "Method Not Allowed" });
     }
-
-    const { imei } = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const { imei } = body;
     if (!imei || typeof imei !== "string") {
       return res.status(400).json({ success: false, error: "Missing or invalid IMEI" });
     }
-
     const result = await imeidbCheck(imei.trim());
-    if (!result.success) {
-      return res.status(502).json(result);
-    }
-
-    return res.status(200).json(result);
+    return res.status(result.success ? 200 : 502).json(result);
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err?.message || "Server error" });
   }
