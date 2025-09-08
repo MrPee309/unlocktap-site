@@ -1,43 +1,46 @@
 // pages/api/order-unlock.ts
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { dhruPlaceOrder } from '../../lib/dhru'
-import { adminAuth, db } from '../../lib/firebaseAdmin'
-import type { ApiResponse, OrderUnlockInput, OrderUnlockResult } from '../../types'
+import type { NextApiRequest, NextApiResponse } from "next";
+import * as dhru from "../../lib/dhru";
+import { db } from "../../lib/firebase"; // if you use Firestore; remove if not
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse<OrderUnlockResult>>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Method not allowed' })
+    if (req.method !== "POST") {
+      res.setHeader("Allow", ["POST"]);
+      return res.status(405).json({ success: false, error: "Method Not Allowed" });
+    }
 
-    // Verify auth (ID token from client)
-    const authHeader = req.headers.authorization || ''
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-    if (!token) return res.status(401).json({ ok: false, error: 'Missing auth token' })
-    const decoded = await adminAuth.verifyIdToken(token)
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const { imei, serviceId, userId } = body;
 
-    const { imei, serviceId, notes } =
-      (typeof req.body === 'string' ? JSON.parse(req.body) : req.body) as OrderUnlockInput
-    if (!imei || !serviceId) return res.status(400).json({ ok: false, error: 'Missing imei/serviceId' })
+    if (!imei || typeof imei !== "string") {
+      return res.status(400).json({ success: false, error: "Missing IMEI" });
+    }
+    if (!serviceId || typeof serviceId !== "string") {
+      return res.status(400).json({ success: false, error: "Missing serviceId" });
+    }
 
-    // Place order with supplier
-    const placed = await dhruPlaceOrder(serviceId, imei, { notes })
+    // Place order with supplier (expects 2 args: serviceId, imei)
+    const placed = await dhru.placeOrder(serviceId, imei);
 
-    // Save to Firestore
-    const doc = await db.collection('orders').add({
-      uid: decoded.uid,
-      imei,
-      serviceId,
-      supplier: 'DHRU',
-      supplierResponse: placed,
-      status: 'pending',
-      createdAt: new Date(),
-    })
+    // Optional: save to Firestore if your project uses it
+    try {
+      if (db) {
+        await db.collection("orders").add({
+          userId: userId || null,
+          imei,
+          serviceId,
+          provider: "DHRU",
+          providerOrder: placed,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    } catch (_) {
+      // ignore storing error to not block response
+    }
 
-    const result: OrderUnlockResult = { orderId: doc.id, eta: placed?.eta }
-    return res.status(200).json({ ok: true, data: result })
-  } catch (e: any) {
-    return res.status(500).json({ ok: false, error: e?.message ?? 'Unknown error' })
+    return res.status(200).json({ success: true, data: placed });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message || "Server error" });
   }
 }
