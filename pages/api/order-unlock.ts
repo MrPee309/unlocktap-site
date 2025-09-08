@@ -1,6 +1,6 @@
 // pages/api/order-unlock.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import * as dhru from "../../lib/dhru";
+import { dhruPlaceOrder } from "../../lib/dhru";
 import { db } from "../../lib/firebaseAdmin";  // Firestore (Admin SDK)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,8 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ success: false, error: "Missing serviceId" });
     }
 
-    // Place order with supplier (expects: serviceId, imei)
-    const placed = await dhru.placeOrder(serviceId, imei);
+    // Place order with supplier (note: dhruPlaceOrder expects (imei, serviceId))
+    const placed = await dhruPlaceOrder(imei, serviceId);
 
     // Save to Firestore (orders collection)
     await db.collection("orders").add({
