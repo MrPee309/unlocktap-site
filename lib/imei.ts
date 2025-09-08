@@ -1,3 +1,3 @@
 
 // lib/imei.ts
-export { checkImei } from "./imeidb";
+export { imeidbCheck as checkImei } from "./imeidb";
