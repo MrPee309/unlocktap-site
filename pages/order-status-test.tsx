@@ -1,46 +1,60 @@
-import { useState } from 'react'
-import { getAuth } from 'firebase/auth'
-import { app } from '../lib/firebaseAppClient' // if you don't have this, replace with your existing firebase client export
+// pages/order-status-test.tsx
+// Patched: import from '../lib/firebaseClient' instead of '../lib/firebase'
+
+import { useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { app } from '../lib/firebaseClient';
 
 export default function OrderStatusTest() {
-  const [orderId, setOrderId] = useState('PASTE_ORDER_ID_FROM_PREVIOUS_STEP')
-  const [out, setOut] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+  const [orderId, setOrderId] = useState('');
+  const [result, setResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  async function run(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
+  const auth = getAuth(app);
+
+  async function checkStatus() {
     try {
-      const auth = auth
-      const tok = await auth.currentUser?.getIdToken()
-      if (!tok) { setOut({ ok:false, error:'Please login first (Google in menu)' }); setLoading(false); return }
-      const r = await fetch('/api/order-status', {
+      setLoading(true);
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+
+      const res = await fetch('/api/order-status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+tok },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ orderId }),
-      })
-      setOut(await r.json())
-    } catch (e) {
-      setOut({ ok: false, error: String(e) })
+      });
+
+      const data = await res.json();
+      setResult(JSON.stringify(data, null, 2));
+    } catch (e: any) {
+      setResult(`Error: ${e?.message || e}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <main style={{maxWidth:720, margin:'24px auto', padding:'0 16px', fontFamily:'system-ui'}}>
-      <h1>Order Status – Test Page</h1>
-      <p>Login with Google from the menu first.</p>
-      <form onSubmit={run} style={{display:'grid', gap:8}}>
-        <input value={orderId} onChange={e=>setOrderId(e.target.value)} placeholder="Order ID"
-               style={{padding:'10px 12px', border:'1px solid #ddd', borderRadius:8}} />
-        <button disabled={loading} style={{padding:'10px 16px', borderRadius:8}}>
-          {loading ? 'Checking…' : 'Check status'}
-        </button>
-      </form>
-      <pre style={{whiteSpace:'pre-wrap', background:'#f7f7f7', padding:12, borderRadius:8, marginTop:16}}>
-        {out ? JSON.stringify(out, null, 2) : 'Response will appear here'}
-      </pre>
+    <main style={{maxWidth: 640, margin: '32px auto', padding: 16}}>
+      <h1>Order Status Test</h1>
+      <label style={{display: 'block', marginBottom: 8}}>
+        Order ID
+        <input
+          value={orderId}
+          onChange={(e) => setOrderId(e.target.value)}
+          placeholder="enter order id"
+          style={{display:'block', width:'100%', padding:8, marginTop:4}}
+        />
+      </label>
+      <button onClick={checkStatus} disabled={loading || !orderId}>
+        {loading ? 'Checking...' : 'Check Status'}
+      </button>
+      {result && (
+        <pre style={{whiteSpace:'pre-wrap', background:'#111', color:'#0f0', padding:12, marginTop:16, borderRadius:6}}>
+          {result}
+        </pre>
+      )}
     </main>
-  )
+  );
 }
