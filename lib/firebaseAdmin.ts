@@ -1,21 +1,14 @@
 // lib/firebaseAdmin.ts
-import * as admin from 'firebase-admin'
-
-let app: admin.app.App | undefined
+import * as admin from "firebase-admin";
 
 if (!admin.apps.length) {
-  const json = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
-  if (!json) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON is not set')
-  }
-  const creds = JSON.parse(json)
-  app = admin.initializeApp({
-    credential: admin.credential.cert(creds as admin.ServiceAccount),
-  })
-} else {
-  app = admin.app()
+  const serviceAccount = JSON.parse(
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON as string
+  );
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 }
 
-export const adminApp = app!
-export const adminAuth = admin.auth(app)
-export const db = admin.firestore(app)
+export default admin;
