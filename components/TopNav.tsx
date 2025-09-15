@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
-import { auth } from "@/lib/firebase"
+import { auth } from "@/lib/firebaseClient"
 import { useAuth } from '../context/AuthContext'
 
 type Item = { href: string; label: string }
