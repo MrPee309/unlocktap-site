@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getAuth } from 'firebase/auth'
-import { app } from '../lib/firebaseAppClient' // if you don't have this, replace with your existing firebase client export
+import { app } from '@/lib/firebaseClient' // if you don't have this, replace with your existing firebase client export
 
 export default function OrderUnlockTest() {
   const [imei, setImei] = useState('356938035643809')

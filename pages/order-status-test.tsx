@@ -1,9 +1,9 @@
 // pages/order-status-test.tsx
-// Patched: import from '../lib/firebaseClient' instead of '../lib/firebase'
+// Patched: import from '@/lib/firebaseClient' instead of '../lib/firebase'
 
 import { useState } from 'react';
 import { getAuth } from 'firebase/auth';
-import { app } from '../lib/firebaseClient';
+import { app } from '@/lib/firebaseClient';
 
 export default function OrderStatusTest() {
   const [orderId, setOrderId] = useState('');
