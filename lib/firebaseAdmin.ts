@@ -1,16 +1,11 @@
-// lib/firebaseAdmin.ts (SERVER ONLY)
-import { getApps, getApp, initializeApp, cert } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
 
-let adminApp;
-if (!getApps().length) {
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
-  if (!raw) { throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_JSON"); }
-  const serviceAccount = JSON.parse(raw);
-  adminApp = initializeApp({ credential: cert(serviceAccount) });
-} else {
-  adminApp = getApp();
+import * as admin from "firebase-admin";
+
+if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 }
 
-export const db = getFirestore(adminApp);
-export { adminApp };
+export const db = admin.firestore();
