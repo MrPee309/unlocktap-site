@@ -1,33 +1,28 @@
-"use client";
-import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../lib/firebaseClient";
+// pages/auth/register.tsx
+import Head from "next/head";
+import AnnouncementBar from "@/components/AnnouncementBar";
+import TopNav from "@/components/TopNav";
+import dynamic from "next/dynamic";
+
+const RegisterForm = dynamic(() => import("@/components/forms/RegisterForm"), { ssr: false });
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErr("");
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      window.location.href = "/";
-    } catch (e: any) {
-      setErr(e?.message || "Register failed");
-    }
-  }
-
   return (
-    <main style={{ maxWidth: 420, margin: "2rem auto" }}>
-      <h1>Register</h1>
-      <form onSubmit={onSubmit}>
-        <input placeholder="Email" type="email" value={email} onChange={e=>setEmail(e.target.value)} />
-        <input placeholder="Password" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-        {err && <p style={{ color: "crimson" }}>{err}</p>}
-        <button type="submit">Create account</button>
-      </form>
-    </main>
+    <>
+      <Head><title>Register — UnlockTap.pro</title></Head>
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <AnnouncementBar />
+        <TopNav />
+        <main className="mx-auto max-w-7xl px-4 py-10">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="mb-2 text-3xl font-extrabold">Create your account</h1>
+            <p className="text-gray-600">Register to check IMEI, order unlocks and track statuses.</p>
+          </div>
+          <div className="mt-8 flex justify-center">
+            <RegisterForm />
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
