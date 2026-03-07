@@ -1,21 +1,53 @@
-// components/TopNav.tsx
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { User } from "lucide-react";
 
 export default function TopNav() {
+  const [open, setOpen] = useState(false);
+
+  const isLoggedIn = false; 
+
   return (
-    <nav className="w-full bg-white/90 backdrop-blur border-b border-slate-100 sticky top-0 z-40">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex h-14 items-center justify-between">
-        <Link href="/" className="text-xl font-semibold tracking-tight">UnlockTap</Link>
-        <div className="hidden md:flex items-center gap-6 text-sm">
-          <Link href="/#check" className="hover:text-slate-900 text-slate-600">Check IMEI</Link>
-          <Link href="/order-unlock" className="hover:text-slate-900 text-slate-600">Order Unlock</Link>
-          <Link href="/pricing" className="hover:text-slate-900 text-slate-600">Pricing</Link>
-        </div>
-        <div className="flex items-center gap-4 text-sm">
-          <Link href="/login" className="text-slate-600 hover:text-slate-900">Login</Link>
-          <Link href="/register" className="inline-flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-white hover:bg-slate-800">Register</Link>
-        </div>
+    <header className="border-b bg-white px-4 py-3 flex justify-between items-center sticky top-0 z-50 backdrop-blur">
+
+      {/* Left Menu */}
+      <div className="flex gap-6 text-sm font-medium">
+        <Link href="/">Home</Link>
+        <Link href="/pricing">Pricing</Link>
+        <Link href="/order">Order Unlock</Link>
       </div>
-    </nav>
+
+      {/* Right Menu */}
+      <div className="flex items-center gap-4 text-sm font-medium">
+
+        {!isLoggedIn ? (
+          <>
+            <Link href="/login">Login</Link>
+            <Link href="/register">Register</Link>
+          </>
+        ) : (
+          <div className="relative">
+            <button onClick={() => setOpen(!open)}>
+              <User size={20} />
+            </button>
+
+            {open && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow">
+                <Link href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">
+                  Dashboard
+                </Link>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
+    </header>
   );
 }
