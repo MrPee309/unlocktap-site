@@ -5,7 +5,7 @@ import TopNav from "../components/TopNav";
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-     <TopNav />    
+      <TopNav />
       <Component {...pageProps} />
     </>
   );
