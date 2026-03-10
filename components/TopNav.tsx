@@ -2,47 +2,92 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { User } from "lucide-react";
 
 export default function TopNav() {
-  const [open, setOpen] = useState(false);
-
-  // Chanje ak logic verifikasyon itilizatè konekte ou
-  const isLoggedIn = false; 
+  const [resellerOpen, setResellerOpen] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
 
   return (
-    <header className="border-b bg-white px-4 py-3 flex justify-between items-center sticky top-0 z-50 backdrop-blur">
-      
-      {/* Left Menu */}
-      <nav className="flex gap-6 text-sm font-medium">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
-        <Link href="/pricing" className="hover:text-blue-600">Pricing</Link>
-        <Link href="/order-unlock-test" className="hover:text-blue-600">Order Unlock</Link>
-      </nav>
+    <header className="bg-white border-b shadow-sm">
+      <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
 
-      {/* Right Menu */}
-      <div className="flex items-center gap-4 text-sm font-medium">
-        {!isLoggedIn ? (
-          <>
-            <Link href="/login" className="px-3 py-1 border rounded hover:bg-gray-100">Login</Link>
-            <Link href="/register" className="px-3 py-1 border rounded hover:bg-gray-100">Register</Link>
-          </>
-        ) : (
-          <div className="relative">
-            <button onClick={() => setOpen(!open)}>
-              <User size={20} />
+        {/* LEFT MENU */}
+        <nav className="flex gap-6 items-center text-sm font-medium">
+
+          {/* Reseller Pricing */}
+          <div
+            className="relative"
+            onMouseEnter={() => setResellerOpen(true)}
+            onMouseLeave={() => setResellerOpen(false)}
+          >
+            <button className="hover:text-blue-600">
+              Reseller Pricing ▾
             </button>
 
-            {open && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow">
-                <Link href="/dashboard">
-                  <span className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Dashboard</span>
+            {resellerOpen && (
+              <div className="absolute top-6 left-0 bg-white border rounded shadow w-52">
+                <Link href="/unlock-service" className="block px-4 py-2 hover:bg-gray-100">
+                  Unlock Service
                 </Link>
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+                <Link href="/server-service" className="block px-4 py-2 hover:bg-gray-100">
+                  Server Service
+                </Link>
+                <Link href="/rent-remote-service" className="block px-4 py-2 hover:bg-gray-100">
+                  Rent & Remote Service
+                </Link>
               </div>
             )}
           </div>
-        )}
+
+          {/* Tutorial */}
+          <div
+            className="relative"
+            onMouseEnter={() => setTutorialOpen(true)}
+            onMouseLeave={() => setTutorialOpen(false)}
+          >
+            <button className="hover:text-blue-600">
+              Tutorial ▾
+            </button>
+
+            {tutorialOpen && (
+              <div className="absolute top-6 left-0 bg-white border rounded shadow w-56">
+                <Link href="/tutorial/iremoval" className="block px-4 py-2 hover:bg-gray-100">iRemoval</Link>
+                <Link href="/tutorial/iremove" className="block px-4 py-2 hover:bg-gray-100">iRemove</Link>
+                <Link href="/tutorial/hfz" className="block px-4 py-2 hover:bg-gray-100">HFZ</Link>
+                <Link href="/tutorial/ikey" className="block px-4 py-2 hover:bg-gray-100">iKey</Link>
+                <Link href="/tutorial/lpro" className="block px-4 py-2 hover:bg-gray-100">LPro</Link>
+                <Link href="/tutorial/mina" className="block px-4 py-2 hover:bg-gray-100">MINA</Link>
+                <Link href="/tutorial/smd" className="block px-4 py-2 hover:bg-gray-100">SMD</Link>
+                <Link href="/tutorial/macos-mdm" className="block px-4 py-2 hover:bg-gray-100">MacOS MDM Bypass</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Other Links */}
+          <Link href="/reseller-plans" className="hover:text-blue-600">
+            Reseller's Plans
+          </Link>
+
+          <Link href="/terms" className="hover:text-blue-600">
+            Terms & Conditions
+          </Link>
+
+        </nav>
+
+        {/* RIGHT MENU */}
+        <div className="flex gap-4 text-sm font-medium">
+          <Link href="/login" className="hover:text-blue-600">
+            Login
+          </Link>
+
+          <Link
+            href="/register"
+            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+          >
+            Register
+          </Link>
+        </div>
+
       </div>
     </header>
   );
