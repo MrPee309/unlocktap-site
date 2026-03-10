@@ -1,94 +1,104 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from "next/link"
 
-export default function TopNav() {
-  const [resellerOpen, setResellerOpen] = useState(false);
-  const [tutorialOpen, setTutorialOpen] = useState(false);
+export default function TopNav(){
 
-  return (
-    <header className="bg-white border-b shadow-sm">
-      <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
+return(
 
-        {/* LEFT MENU */}
-        <nav className="flex gap-6 items-center text-sm font-medium">
+<header className="bg-white border-b">
 
-          {/* Reseller Pricing */}
-          <div
-            className="relative"
-            onMouseEnter={() => setResellerOpen(true)}
-            onMouseLeave={() => setResellerOpen(false)}
-          >
-            <button className="hover:text-blue-600">
-              Reseller Pricing ▾
-            </button>
+<div className="max-w-7xl mx-auto flex justify-between items-center p-4">
 
-            {resellerOpen && (
-              <div className="absolute top-6 left-0 bg-white border rounded shadow w-52">
-                <Link href="/unlock-service" className="block px-4 py-2 hover:bg-gray-100">
-                  Unlock Service
-                </Link>
-                <Link href="/server-service" className="block px-4 py-2 hover:bg-gray-100">
-                  Server Service
-                </Link>
-                <Link href="/rent-remote-service" className="block px-4 py-2 hover:bg-gray-100">
-                  Rent & Remote Service
-                </Link>
-              </div>
-            )}
-          </div>
+<div className="flex gap-8">
 
-          {/* Tutorial */}
-          <div
-            className="relative"
-            onMouseEnter={() => setTutorialOpen(true)}
-            onMouseLeave={() => setTutorialOpen(false)}
-          >
-            <button className="hover:text-blue-600">
-              Tutorial ▾
-            </button>
+{/* Reseller Pricing */}
 
-            {tutorialOpen && (
-              <div className="absolute top-6 left-0 bg-white border rounded shadow w-56">
-                <Link href="/tutorial/iremoval" className="block px-4 py-2 hover:bg-gray-100">iRemoval</Link>
-                <Link href="/tutorial/iremove" className="block px-4 py-2 hover:bg-gray-100">iRemove</Link>
-                <Link href="/tutorial/hfz" className="block px-4 py-2 hover:bg-gray-100">HFZ</Link>
-                <Link href="/tutorial/ikey" className="block px-4 py-2 hover:bg-gray-100">iKey</Link>
-                <Link href="/tutorial/lpro" className="block px-4 py-2 hover:bg-gray-100">LPro</Link>
-                <Link href="/tutorial/mina" className="block px-4 py-2 hover:bg-gray-100">MINA</Link>
-                <Link href="/tutorial/smd" className="block px-4 py-2 hover:bg-gray-100">SMD</Link>
-                <Link href="/tutorial/macos-mdm" className="block px-4 py-2 hover:bg-gray-100">MacOS MDM Bypass</Link>
-              </div>
-            )}
-          </div>
+<div className="relative group">
 
-          {/* Other Links */}
-          <Link href="/reseller-plans" className="hover:text-blue-600">
-            Reseller's Plans
-          </Link>
+<button className="font-medium">
+Reseller Pricing
+</button>
 
-          <Link href="/terms" className="hover:text-blue-600">
-            Terms & Conditions
-          </Link>
+<div className="absolute hidden group-hover:grid grid-cols-3 gap-6 bg-white shadow-lg p-6 w-[600px]">
 
-        </nav>
+<div>
+<h4 className="font-bold mb-2">Unlock Services</h4>
+<p>iPhone Unlock</p>
+<p>Samsung Unlock</p>
+<p>Xiaomi Unlock</p>
+</div>
 
-        {/* RIGHT MENU */}
-        <div className="flex gap-4 text-sm font-medium">
-          <Link href="/login" className="hover:text-blue-600">
-            Login
-          </Link>
+<div>
+<h4 className="font-bold mb-2">Server Services</h4>
+<p>FRP Remove</p>
+<p>IMEI Repair</p>
+<p>Network Unlock</p>
+</div>
 
-          <Link
-            href="/register"
-            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-          >
-            Register
-          </Link>
-        </div>
+<div>
+<h4 className="font-bold mb-2">Rent & Remote</h4>
+<p>Remote GSM Tool</p>
+<p>Remote Unlock</p>
+<p>Remote Repair</p>
+</div>
 
-      </div>
-    </header>
-  );
+</div>
+
+</div>
+
+{/* Tutorials */}
+
+<div className="relative group">
+
+<button className="font-medium">
+Tutorials
+</button>
+
+<div className="absolute hidden group-hover:grid grid-cols-3 gap-6 bg-white shadow-lg p-6 w-[600px]">
+
+<div>
+<h4 className="font-bold">Apple Tools</h4>
+<p>iRemoval</p>
+<p>iRemove</p>
+<p>MacOS MDM Bypass</p>
+</div>
+
+<div>
+<h4 className="font-bold">Android Tools</h4>
+<p>HFZ</p>
+<p>iKey</p>
+<p>LPRO</p>
+</div>
+
+<div>
+<h4 className="font-bold">Advanced</h4>
+<p>MINA</p>
+<p>SMD</p>
+</div>
+
+</div>
+
+</div>
+
+<Link href="/plans">Reseller Plans</Link>
+
+<Link href="/terms">Terms</Link>
+
+</div>
+
+<div className="flex gap-4">
+
+<Link href="/login">Login</Link>
+
+<Link href="/register">Register</Link>
+
+</div>
+
+</div>
+
+</header>
+
+)
+
 }
