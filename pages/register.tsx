@@ -1,28 +1,53 @@
-// pages/auth/register.tsx
-import Head from "next/head";
-import AnnouncementBar from "@/components/AnnouncementBar";
-import TopNav from "@/components/TopNav";
-import dynamic from "next/dynamic";
+"use client";
 
-const RegisterForm = dynamic(() => import("@/components/forms/RegisterForm"), { ssr: false });
+import { useState } from "react";
 
 export default function RegisterPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    alert(`Register attempt:\nEmail: ${email}\nPassword: ${password}`);
+  };
+
   return (
-    <>
-      <Head><title>Register — UnlockTap.pro</title></Head>
-      <div className="min-h-screen bg-gray-50 text-gray-900">
-        <AnnouncementBar />
-        <TopNav />
-        <main className="mx-auto max-w-7xl px-4 py-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-2 text-3xl font-extrabold">Create your account</h1>
-            <p className="text-gray-600">Register to check IMEI, order unlocks and track statuses.</p>
-          </div>
-          <div className="mt-8 flex justify-center">
-            <RegisterForm />
-          </div>
-        </main>
-      </div>
-    </>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">Register</h1>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+        <button type="submit" className="bg-green-600 text-white py-2 rounded hover:bg-green-700">
+          Register
+        </button>
+      </form>
+    </div>
   );
 }

@@ -1,33 +1,40 @@
 "use client";
+
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../lib/firebaseClient";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
 
-  async function onSubmit(e: React.FormEvent) {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErr("");
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "/";
-    } catch (e: any) {
-      setErr(e?.message || "Login failed");
-    }
-  }
+    alert(`Login attempt:\nEmail: ${email}\nPassword: ${password}`);
+  };
 
   return (
-    <main style={{ maxWidth: 420, margin: "2rem auto" }}>
-      <h1>Login</h1>
-      <form onSubmit={onSubmit}>
-        <input placeholder="Email" type="email" value={email} onChange={e=>setEmail(e.target.value)} />
-        <input placeholder="Password" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-        {err && <p style={{ color: "crimson" }}>{err}</p>}
-        <button type="submit">Sign in</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">Login</h1>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+        <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Login
+        </button>
       </form>
-    </main>
+    </div>
   );
 }

@@ -1,49 +1,50 @@
-import { useState } from 'react'
-import { getAuth } from 'firebase/auth'
-import { app } from '@/lib/firebaseClient' // if you don't have this, replace with your existing firebase client export
+"use client";
 
-export default function OrderUnlockTest() {
-  const [imei, setImei] = useState('356938035643809')
-  const [serviceId, setServiceId] = useState('SERVICE_ID_EXAMPLE')
-  const [out, setOut] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+import { useState } from "react";
 
-  async function run(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const auth = getAuth(app)
-      const tok = await auth.currentUser?.getIdToken()
-      if (!tok) { setOut({ ok:false, error:'Please login first (Google in menu)' }); setLoading(false); return }
-      const r = await fetch('/api/order-unlock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+tok },
-        body: JSON.stringify({ imei, serviceId }),
-      })
-      setOut(await r.json())
-    } catch (e) {
-      setOut({ ok: false, error: String(e) })
-    } finally {
-      setLoading(false)
-    }
-  }
+export default function OrderUnlockPage() {
+  const [imei, setImei] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(`Order submitted:\nPhone: ${phone}\nIMEI: ${imei}`);
+    // Isit la ou ka ajoute API call pou verifye / unlock
+  };
 
   return (
-    <main style={{maxWidth:720, margin:'24px auto', padding:'0 16px', fontFamily:'system-ui'}}>
-      <h1>Order Unlock – Test Page</h1>
-      <p>Login with Google from the menu first.</p>
-      <form onSubmit={run} style={{display:'grid', gap:8}}>
-        <input value={imei} onChange={e=>setImei(e.target.value)} placeholder="IMEI"
-               style={{padding:'10px 12px', border:'1px solid #ddd', borderRadius:8}} />
-        <input value={serviceId} onChange={e=>setServiceId(e.target.value)} placeholder="Service ID"
-               style={{padding:'10px 12px', border:'1px solid #ddd', borderRadius:8}} />
-        <button disabled={loading} style={{padding:'10px 16px', borderRadius:8}}>
-          {loading ? 'Placing…' : 'Place order'}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4"
+      >
+        <h1 className="text-2xl font-bold">Order Unlock</h1>
+
+        <input
+          type="text"
+          placeholder="Phone Model"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="IMEI Number"
+          value={imei}
+          onChange={(e) => setImei(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+          required
+        />
+
+        <button
+          type="submit"
+          className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+        >
+          Submit Order
         </button>
       </form>
-      <pre style={{whiteSpace:'pre-wrap', background:'#f7f7f7', padding:12, borderRadius:8, marginTop:16}}>
-        {out ? JSON.stringify(out, null, 2) : 'Response will appear here'}
-      </pre>
-    </main>
-  )
+    </div>
+  );
 }
