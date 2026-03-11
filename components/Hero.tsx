@@ -4,7 +4,6 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 
 export default function Hero() {
-
   const phones = [
     "/images/phones/macbookpromdm.png",
     "/images/phones/icloud.png",
@@ -18,7 +17,7 @@ export default function Hero() {
   const [fade, setFade] = useState(true)
   const [offsetY, setOffsetY] = useState(0)
 
-  // Slider logic
+  // Slider logic (automatic)
   useEffect(() => {
     const interval = setInterval(() => {
       setFade(false)
@@ -30,7 +29,7 @@ export default function Hero() {
     return () => clearInterval(interval)
   }, [])
 
-  // Multi-layer parallax scroll
+  // Parallax scroll
   useEffect(() => {
     const handleScroll = () => {
       setOffsetY(window.scrollY)
@@ -39,18 +38,35 @@ export default function Hero() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Manual slide functions
+  const prevSlide = () => {
+    setFade(false)
+    setTimeout(() => {
+      setIndex((prev) => (prev - 1 + phones.length) % phones.length)
+      setFade(true)
+    }, 200)
+  }
+
+  const nextSlide = () => {
+    setFade(false)
+    setTimeout(() => {
+      setIndex((prev) => (prev + 1) % phones.length)
+      setFade(true)
+    }, 200)
+  }
+
   return (
     <section className="relative overflow-hidden bg-blue-600">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
           {/* Left content */}
-          <div className="text-white z-10 relative">
+          <div className="text-white z-10 relative space-y-4">
             <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight">
               Check IMEI & Unlock<br /> your device
             </h1>
 
-            <form className="mt-8 flex items-center gap-3" action="/check" id="check">
+            <form className="flex items-center gap-3" action="/check" id="check">
               <input
                 type="text"
                 placeholder="Enter IMEI number"
@@ -66,7 +82,7 @@ export default function Hero() {
 
             <a
               href="/order-unlock"
-              className="mt-5 inline-flex items-center text-white/90 hover:text-white underline underline-offset-4"
+              className="inline-flex items-center text-white/90 hover:text-white underline underline-offset-4"
             >
               Order Unlock
             </a>
@@ -75,7 +91,7 @@ export default function Hero() {
           {/* Phone slider (desktop only) */}
           <div className="hidden lg:block relative">
             <div
-              className="relative mx-auto w-[320px] h-[620px] sm:w-[360px] sm:h-[700px] lg:w-[380px] lg:h-[720px] overflow-hidden"
+              className="relative mx-auto w-[340px] h-[640px] sm:w-[360px] sm:h-[700px] lg:w-[380px] lg:h-[720px] overflow-hidden"
             >
               {/* Shadow / glow layer */}
               <div
@@ -106,6 +122,20 @@ export default function Hero() {
                   transform: `translateY(${offsetY * 0.02}px) scale(${fade ? 1.05 : 1})`
                 }}
               ></div>
+
+              {/* Navigation buttons */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/30 hover:bg-white/50 p-2"
+              >
+                ◀
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/30 hover:bg-white/50 p-2"
+              >
+                ▶
+              </button>
             </div>
           </div>
 
