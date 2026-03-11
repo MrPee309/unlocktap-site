@@ -16,17 +16,27 @@ export default function Hero() {
 
   const [index, setIndex] = useState(0)
   const [fade, setFade] = useState(true)
+  const [offsetY, setOffsetY] = useState(0)
 
+  // Slider logic
   useEffect(() => {
     const interval = setInterval(() => {
-      setFade(false) // start fade out
+      setFade(false)
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % phones.length)
-        setFade(true) // fade in new image
-      }, 500) // fade duration
-    }, 4000) // change every 4 seconds
-
+        setFade(true)
+      }, 500)
+    }, 4000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Multi-layer parallax scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffsetY(window.scrollY)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
@@ -35,7 +45,7 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
           {/* Left content */}
-          <div className="text-white">
+          <div className="text-white z-10 relative">
             <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight">
               Check IMEI & Unlock<br /> your device
             </h1>
@@ -63,9 +73,19 @@ export default function Hero() {
           </div>
 
           {/* Phone slider (desktop only) */}
-          <div className="hidden lg:block">
-            <div className="relative mx-auto w-[400px] h-[750px] sm:w-[450px] sm:h-[850px] lg:w-[500px] lg:h-[950px] overflow-hidden">
+          <div className="hidden lg:block relative">
+            <div
+              className="relative mx-auto w-[320px] h-[620px] sm:w-[360px] sm:h-[700px] lg:w-[380px] lg:h-[720px] overflow-hidden"
+            >
+              {/* Shadow / glow layer */}
+              <div
+                className="absolute inset-0 rounded-3xl bg-black/10 blur-xl"
+                style={{
+                  transform: `translateY(${offsetY * 0.05}px) scale(${fade ? 1.05 : 1})`
+                }}
+              ></div>
 
+              {/* Phone layer */}
               <Image
                 key={phones[index]}
                 src={phones[index]}
@@ -73,9 +93,19 @@ export default function Hero() {
                 fill
                 priority
                 className={`object-contain drop-shadow-2xl transition-all duration-1000 ease-in-out
-                  ${fade ? "opacity-100 scale-100 translate-x-0" : "opacity-0 scale-95 -translate-x-10"}`}
+                  ${fade ? "opacity-100 scale-105 translate-x-0" : "opacity-0 scale-95 -translate-x-5"}`}
+                style={{
+                  transform: `translateY(${offsetY * 0.1}px)`
+                }}
               />
 
+              {/* Subtle overlay / parallax glow */}
+              <div
+                className="absolute inset-0 pointer-events-none rounded-3xl bg-white/5"
+                style={{
+                  transform: `translateY(${offsetY * 0.02}px) scale(${fade ? 1.05 : 1})`
+                }}
+              ></div>
             </div>
           </div>
 
