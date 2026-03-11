@@ -1,12 +1,11 @@
-import type { AppProps } from "next/app";
-import "../styles/globals.css";
+import "@/styles/globals.css";
+import TopBanners from "@/components/TopBanners";
+import TopNav from "@/components/TopNav";
 
-import TopNav from "../components/TopNav"
-
-
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }) {
   return (
     <>
+      <TopBanners />
       <TopNav />
       <Component {...pageProps} />
     </>
