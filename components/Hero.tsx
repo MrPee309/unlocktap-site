@@ -8,18 +8,23 @@ export default function Hero() {
   const phones = [
     "/images/phones/macbookpromdm.png",
     "/images/phones/icloud.png",
-    "/images/phones/Infinix.png",
-    "/images/phones/Google pixel.png",
-    "/images/phones/iPhone17ProMax.png",
-    "/images/phones/iPhone17PromaxColor.png"
+    "/images/phones/infinix.png",
+    "/images/phones/google-pixel.png",
+    "/images/phones/iphone17promax.png",
+    "/images/phones/iphone17promaxcolor.png"
   ]
 
   const [index, setIndex] = useState(0)
+  const [fade, setFade] = useState(true)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % phones.length)
-    }, 3000)
+      setFade(false) // start fade out
+      setTimeout(() => {
+        setIndex((prev) => (prev + 1) % phones.length)
+        setFade(true) // fade in new image
+      }, 500) // fade duration
+    }, 4000) // change every 4 seconds
 
     return () => clearInterval(interval)
   }, [])
@@ -41,7 +46,6 @@ export default function Hero() {
                 placeholder="Enter IMEI number"
                 className="w-full max-w-md rounded-md border-0 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-white"
               />
-
               <button
                 type="submit"
                 className="rounded-md bg-green-500 px-5 py-3 font-semibold text-slate-900 hover:bg-green-400"
@@ -60,14 +64,16 @@ export default function Hero() {
 
           {/* Phone slider (desktop only) */}
           <div className="hidden lg:block">
-            <div className="relative mx-auto w-[320px] h-[620px]">
+            <div className="relative mx-auto w-[400px] h-[750px] sm:w-[450px] sm:h-[850px] lg:w-[500px] lg:h-[950px] overflow-hidden">
 
               <Image
+                key={phones[index]}
                 src={phones[index]}
                 alt="UnlockTap device preview"
                 fill
                 priority
-                className="object-contain drop-shadow-2xl transition-all duration-700"
+                className={`object-contain drop-shadow-2xl transition-all duration-1000 ease-in-out
+                  ${fade ? "opacity-100 scale-100 translate-x-0" : "opacity-0 scale-95 -translate-x-10"}`}
               />
 
             </div>
