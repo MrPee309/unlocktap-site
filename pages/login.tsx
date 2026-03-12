@@ -1,14 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { auth } from "../lib/firebaseClient"; // asire w firebaseClient.ts byen configuré
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Login attempt:\nEmail: ${email}\nPassword: ${password}`);
+    try {
+      // konekte ak Firebase
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login successful!");
+      router.push("/dashboard"); // ale nan dashboard apre login
+    } catch (error: any) {
+      alert(error.message); // montre erè si login echwe
+    }
   };
 
   return (
