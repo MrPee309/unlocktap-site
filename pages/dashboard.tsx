@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db } from "../lib/firebaseClient"; // asire w firebaseClient.ts byen configuré
-import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../lib/firebaseClient";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
@@ -12,15 +12,16 @@ export default function Dashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Verifye login itilizatè ak chaje done
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
       if (!user) {
-        router.push("/login");
+        router.push("/login"); // si pa gen login, retounen login
         return;
       }
 
       try {
-        // Ranmase done itilizatè nan Firestore
+        // Chaje done itilizatè nan Firestore
         const userRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userRef);
 
@@ -28,8 +29,8 @@ export default function Dashboard() {
           setUserData(userDoc.data());
         }
 
-        // Ranmase orders si ou itilize subcollection orders
-        const ordersColRef = collection(db, "users", user.uid, "orders"); // CORRECT
+        // Chaje orders nan subcollection "orders"
+        const ordersColRef = collection(db, "users", user.uid, "orders");
         const ordersSnapshot = await getDocs(ordersColRef);
         const ordersList = ordersSnapshot.docs.map((doc) => doc.data());
         setOrders(ordersList);
@@ -44,21 +45,23 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [router]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="min-h-screen p-8 bg-gray-100 flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-4">Welcome, {userData?.email}</h1>
-      <p className="mb-4">Balance: ${userData?.balance || 0}</p>
+      <p className="mb-4 text-lg">Balance: ${userData?.balance || 0}</p>
+
 
       <h2 className="text-2xl font-semibold mb-2">Your Orders</h2>
       {orders.length === 0 ? (
         <p>No orders yet.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 w-full max-w-xl">
           {orders.map((order, index) => (
-            <li key={index} className="bg-white p-4 rounded shadow">
-              {order.device} - Status: {order.status}
+            <li key={index} className="bg-white p-4 rounded shadow flex justify-between">
+              <span>{order.device || "Unknown Device"}</span>
+              <span>Status: {order.status || "pending"}</span>
             </li>
           ))}
         </ul>
