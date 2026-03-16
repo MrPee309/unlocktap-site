@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { getSession } from "next-auth/react"
+import { getSession } from "next-auth/react/next" // ← korije pou v5
 import { getUserQuota, decrementUserQuota } from "../../lib/quota"
 import { imeidbCheck } from "../../lib/imeidb" // fonksyon pou rele IMEICheck.com
 
@@ -39,4 +39,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err?.message || "Server error" })
   }
+}
 }
