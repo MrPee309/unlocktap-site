@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ success: false, error: "You must login first" })
   }
 
-  const userId = session.user.id
+  const userId = session.user?.id || session.user?.email || "unknown"
   const userQuota = await getUserQuota(userId)
 
   if (userQuota <= 0) {
@@ -39,5 +39,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err?.message || "Server error" })
   }
-}
 }
