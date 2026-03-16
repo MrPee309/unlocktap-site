@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react/next"
+import { useSession } from "next-auth/react"
 import ImeiChecker from "../components/ImeiChecker"
 
 export default function CheckImeiPage() {
