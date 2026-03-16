@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { getSession } from "next-auth/react/next" // ← korije pou v5
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../auth/[...nextauth]" // adapte chemen ou
 import { getUserQuota, decrementUserQuota } from "../../lib/quota"
-import { imeidbCheck } from "../../lib/imeidb" // fonksyon pou rele IMEICheck.com
+import { imeidbCheck } from "../../lib/imeidb"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // 1️⃣ Verifye session itilizatè
-  const session = await getSession({ req })
+  const session = await getServerSession(req, res, authOptions)
   if (!session) {
     return res.status(401).json({ success: false, error: "You must login first" })
   }
@@ -27,14 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // 2️⃣ Rele IMEICheck.com API reyèl
     const result = await imeidbCheck(imei.trim())
-
-    // 3️⃣ Diminye quota itilizatè a sèlman si IMEI verifye reyèlman
-    if (result.success) {
-      await decrementUserQuota(userId)
-    }
-
+    if (result.success) await decrementUserQuota(userId)
     return res.status(result.success ? 200 : 502).json(result)
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err?.message || "Server error" })
