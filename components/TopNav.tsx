@@ -1,18 +1,34 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { FaApple, FaAndroid, FaServer, FaLaptop } from "react-icons/fa"
-import { GiRotaryPhone } from "react-icons/gi"
-import { useState } from "react"
+import Link from "next/link";
+import { FaApple, FaAndroid, FaServer, FaLaptop } from "react-icons/fa";
+import { GiRotaryPhone } from "react-icons/gi";
+import { useState, useEffect } from "react";
+import { auth } from "../lib/firebaseClient";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function TopNav() {
-  const [mobileMenu, setMobileMenu] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+
+  // Tcheke si itilizatè konekte
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const toggleDropdown = (name: string) => {
-    if (openDropdown === name) setOpenDropdown(null)
-    else setOpenDropdown(name)
-  }
+    if (openDropdown === name) setOpenDropdown(null);
+    else setOpenDropdown(name);
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
@@ -20,7 +36,6 @@ export default function TopNav() {
 
         {/* LEFT MENU */}
         <div className="flex items-center gap-8">
-
           {/* LOGO */}
           <Link href="/" className="font-bold text-xl text-blue-600">
             UnlockTap
@@ -28,7 +43,6 @@ export default function TopNav() {
 
           {/* DESKTOP MENU */}
           <div className="hidden md:flex items-center gap-6">
-
             {/* Reseller Pricing */}
             <div 
               className="relative"
@@ -104,7 +118,6 @@ export default function TopNav() {
             <Link href="/plans" className="font-medium hover:text-blue-600">Reseller Plans</Link>
             <Link href="/terms" className="font-medium hover:text-blue-600">Terms</Link>
           </div>
-
         </div>
 
         {/* RIGHT MENU */}
@@ -117,9 +130,20 @@ export default function TopNav() {
             className="hidden md:block border rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          {/* Login/Register */}
-          <Link href="/login" className="font-medium hover:text-blue-600">Login</Link>
-          <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</Link>
+          {/* Login/Register OR Logout */}
+          {!user ? (
+            <>
+              <Link href="/login" className="font-medium hover:text-blue-600">Login</Link>
+              <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+            >
+              Logout
+            </button>
+          )}
 
           {/* MOBILE MENU BUTTON */}
           <button 
@@ -165,10 +189,24 @@ export default function TopNav() {
 
           <Link href="/plans" className="font-medium hover:text-blue-600">Reseller Plans</Link>
           <Link href="/terms" className="font-medium hover:text-blue-600">Terms</Link>
-          <Link href="/login" className="font-medium hover:text-blue-600">Login</Link>
-          <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</Link>
+
+          {/* MOBILE LOGIN/REGISTER OR LOGOUT */}
+          {!user ? (
+            <>
+              <Link href="/login" className="font-medium hover:text-blue-600">Login</Link>
+              <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+            >
+              Logout
+            </button>
+          )}
+
         </div>
       </div>
     </header>
-  )
+  );
 }

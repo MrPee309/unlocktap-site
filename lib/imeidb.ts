@@ -1,32 +1,16 @@
 // lib/imeidb.ts
-/**
- * Adapter pou IMEI DB (e.g. sickw.com PHP API).
- * Li li IMEIDB_API_BASE ak IMEIDB_API_KEY nan env.
- * N ap ekspòte fonksyon `imeidbCheck` + alias `checkImei`
- * pou konpatib ak tout import ki deja egziste.
- */
 export async function imeidbCheck(imei: string) {
-  const base = process.env.IMEIDB_API_BASE;
-  const key = process.env.IMEIDB_API_KEY;
-  if (!base || !key) throw new Error('IMEIDB env missing');
+  const API_KEY = process.env.IMEI_API_KEY
+  const API_URL = process.env.IMEI_API_URL
 
-  // asire pa gen double slash epi tout query encode
-  const normBase = base.replace(/\/+$/, '');
-  const url = `${normBase}/api.php?format=json&key=${encodeURIComponent(key)}&imei=${encodeURIComponent(imei)}&service=CHECK`;
-
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    cache: 'no-store',
-  });
+  const res = await fetch(`${API_URL}?imei=${imei}`, {
+    headers: { "Authorization": `Bearer ${API_KEY}` },
+  })
 
   if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`IMEIDB error ${res.status}: ${txt}`);
+    return { success: false, error: "IMEI not found or API error" }
   }
-  return res.json();
-}
 
-// Alias ak default pou enpò ki itilize { checkImei } oswa default
-export { imeidbCheck as checkImei };
-export default imeidbCheck;
+  const data = await res.json()
+  return { success: true, ...data }
+}
