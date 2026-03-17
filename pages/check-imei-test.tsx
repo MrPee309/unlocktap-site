@@ -1,59 +1,74 @@
-"use client"; // ← trè enpòtan pou Client Component
+"use client";
 
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react" // v5 korije
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
+interface IMEIResult {
+  brand?: string;
+  model?: string;
+  status?: string;
+  type?: string;
+  serial?: string;
+}
 
 export default function CheckIMEIUnlockTap() {
-  const { data: session } = useSession()
-  const [imei, setImei] = useState("")
-  const [result, setResult] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [quota, setQuota] = useState<number>(0)
+  const { data: session } = useSession();
+  const [imei, setImei] = useState("");
+  const [result, setResult] = useState<IMEIResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [quota, setQuota] = useState<number>(0);
 
+  // Fetch user quota
   useEffect(() => {
-    if (!session) return
+    if (!session) return;
+
     async function fetchQuota() {
       try {
-        const res = await fetch("/api/user-quota")
-        const data = await res.json()
-        if (res.ok) setQuota(data.quota || 0)
+        const res = await fetch("/api/user-quota");
+        if (!res.ok) throw new Error("Failed to fetch quota");
+        const data = await res.json();
+        setQuota(data.quota || 0);
       } catch (err) {
-        console.log("Failed to fetch quota:", err)
+        console.error("Failed to fetch quota:", err);
       }
     }
-    fetchQuota()
-  }, [session])
+
+    fetchQuota();
+  }, [session]);
 
   const handleCheck = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!session) return setError("You must login or register first to use this service")
-    if (!imei.trim()) return setError("Please enter an IMEI")
-    if (quota <= 0) return setError("You have used all your free checks. Buy more to continue.")
+    e.preventDefault();
 
-    setLoading(true)
-    setResult(null)
-    setError("")
+    if (!session) return setError("You must login or register first to use this service");
+    if (!imei.trim()) return setError("Please enter an IMEI");
+    if (quota <= 0) return setError("You have used all your free checks. Buy more to continue.");
+
+    setLoading(true);
+    setResult(null);
+    setError("");
 
     try {
       const res = await fetch("/api/check-imei", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imei: imei.trim() }),
-      })
-      const data = await res.json()
+      });
+
+      const data = await res.json();
+
       if (!res.ok || !data.success) {
-        setError(data.error || "Something went wrong")
+        setError(data.error || "Something went wrong");
       } else {
-        setResult(data)
-        setQuota((prev) => Math.max(prev - 1, 0))
+        setResult(data);
+        setQuota(prev => Math.max(prev - 1, 0));
       }
-    } catch (err) {
-      setError("Failed to fetch API")
+    } catch {
+      setError("Failed to fetch API");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <main className="max-w-xl mx-auto p-6 font-sans">
@@ -109,5 +124,5 @@ export default function CheckIMEIUnlockTap() {
         </p>
       )}
     </main>
-  )
+  );
 }

@@ -1,14 +1,15 @@
 "use client";
 
-import { useSession } from "next-auth/react"
-import ImeiChecker from "../components/ImeiChecker"
+import dynamic from "next/dynamic";
+
+// Dynamic import, ssr false pou ImeiChecker
+const ImeiChecker = dynamic(() => import("../components/ImeiChecker"), { ssr: false });
 
 export default function CheckImeiPage() {
-  const { data: session } = useSession()
   return (
     <main className="p-6">
       <h1 className="text-2xl font-bold mb-6 text-center">Check IMEI – UnlockTap</h1>
-      <ImeiChecker session={session} />
+      <ImeiChecker />
     </main>
-  )
+  );
 }
