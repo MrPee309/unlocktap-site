@@ -2,12 +2,9 @@
 
 import dynamic from "next/dynamic";
 
-// Dynamic import pou component ki depann sou session
-const CheckIMEIUnlockTap = dynamic(
-  () => import("../components/CheckIMEIUnlockTap"),
-  { ssr: false } // Pap eseye render sou server, totalman client-side
-);
+// Dynamic import pou ImeiChecker (client-side only)
+const ImeiChecker = dynamic(() => import("../components/ImeiChecker"), { ssr: false });
 
 export default function CheckImeiTestPage() {
-  return <CheckIMEIUnlockTap />;
+  return <ImeiChecker />;
 }
