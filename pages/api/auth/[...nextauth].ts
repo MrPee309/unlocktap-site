@@ -1,7 +1,8 @@
+// pages/api/auth/[...nextauth].ts
 import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import { authOptions } from "../../../lib/auth"  // <-- pa janm import route API
 
-export const authOptions = {
+export default NextAuth(authOptions) = {
   providers: [
     CredentialsProvider({
       name: "Credentials",

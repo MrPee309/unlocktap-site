@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]" // adapte chemen ou
+import { authOptions } from "../../lib/auth" // Sèl chemen kòrèk pou authOptions
 import { getUserQuota, decrementUserQuota } from "../../lib/quota"
 import { imeidbCheck } from "../../lib/imeidb"
 
