@@ -1,5 +1,7 @@
+"use client"; // ← trè enpòtan pou Client Component
+
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react" // ← korije pou v5
+import { useSession } from "next-auth/react" // v5 korije
 
 export default function CheckIMEIUnlockTap() {
   const { data: session } = useSession()
