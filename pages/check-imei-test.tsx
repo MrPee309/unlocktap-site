@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react/next" // ← korije pou v5
+import { useSession } from "next-auth/react" // ← korije pou v5
 
 export default function CheckIMEIUnlockTap() {
   const { data: session } = useSession()
