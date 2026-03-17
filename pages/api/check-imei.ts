@@ -1,6 +1,7 @@
+// pages/api/check-imei.ts
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../../lib/auth" // Sèl chemen kòrèk pou authOptions
+import { authOptions } from "../../lib/auth"
 import { getUserQuota, decrementUserQuota } from "../../lib/quota"
 import { imeidbCheck } from "../../lib/imeidb"
 
