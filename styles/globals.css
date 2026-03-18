@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LOGO SCROLL ANIMATION */
+/* ============================= */
+/* LOGO SCROLL ANIMATION (OU TE GEN LI) */
+/* ============================= */
 
 @keyframes logoScroll {
   0% {
@@ -20,4 +22,52 @@
 
 .animate-logo-scroll:hover {
   animation-play-state: paused;
+}
+
+/* ============================= */
+/* DROPDOWN ANIMATION (NOUVO PRO UI) */
+/* ============================= */
+
+@keyframes fadeInDropdown {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-animate {
+  animation: fadeInDropdown 0.2s ease-out;
+}
+
+/* ============================= */
+/* SMOOTH HOVER EFFECT */
+/* ============================= */
+
+.menu-item {
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  transform: translateY(-1px);
+}
+
+/* ============================= */
+/* SCROLLBAR STYLE (OPTIONAL PRO LOOK) */
+/* ============================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* gray-300 */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* gray-400 */
 }
