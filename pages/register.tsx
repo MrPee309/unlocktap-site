@@ -1,84 +1,75 @@
 "use client";
 
 import { useState } from "react";
-import { auth, db } from "../lib/firebaseClient"; // Asire firebaseClient.ts byen configuré
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { auth } from "../lib/firebaseClient";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+  const handleLogin = async () => {
+    if (!email || !password) {
+      return alert("Please fill in both email and password");
     }
 
-    setLoading(true);
-
     try {
-      // Kreye itilizatè ak Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      setLoading(true);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      // Sove itilizatè nan Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        email: userCredential.user.email,
-        createdAt: new Date(),
-        balance: 0, // initial balance pou kliyan
-      });
+      if (!user.emailVerified) {
+        alert("Please verify your email before logging in.");
+        setLoading(false);
+        return;
+      }
 
-      alert("Registration successful!");
-      router.push("/login"); // ale nan login apre register
-
-    } catch (error: any) {
-      alert(error.message);
+      // Login successful
+      alert("Login successful!");
+      router.push("/dashboard/profile"); // oswa homepage ou vle
+    } catch (err: any) {
+      alert("Error: " + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">Register</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md space-y-4">
+        <h1 className="text-2xl font-bold text-center">Login</h1>
+
         <input
+          className="w-full border p-3 rounded"
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border px-3 py-2 rounded w-full"
-          required
         />
         <input
+          className="w-full border p-3 rounded"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border px-3 py-2 rounded w-full"
-          required
         />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="border px-3 py-2 rounded w-full"
-          required
-        />
+
         <button
-          type="submit"
+          onClick={handleLogin}
+          className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 disabled:opacity-50"
           disabled={loading}
-          className={`py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}
         >
-          {loading ? "Registering..." : "Register"}
+          {loading ? "Logging in..." : "Login"}
         </button>
-      </form>
+
+        <p className="text-sm text-center">
+          Don't have an account? <Link href="/register" className="text-blue-600 underline">Register</Link>
+        </p>
+      </div>
     </div>
   );
 }
