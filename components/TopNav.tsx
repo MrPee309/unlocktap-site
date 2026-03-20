@@ -6,8 +6,8 @@ import { auth } from "../lib/firebaseClient";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 
 export default function TopNav() {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const [showClientArea, setShowClientArea] = useState(false);
   const [showPlaceOrder, setShowPlaceOrder] = useState(false);
@@ -16,6 +16,7 @@ export default function TopNav() {
   const menuRef = useRef<HTMLDivElement>(null);
   let hoverTimeout: any;
 
+  // Mete user apre login
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -32,7 +33,6 @@ export default function TopNav() {
         setOpenDropdown(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -63,13 +63,9 @@ export default function TopNav() {
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
-
-        <Link href="/" className="font-bold text-xl text-blue-600">
-          UnlockTap
-        </Link>
+        <Link href="/" className="font-bold text-xl text-blue-600">UnlockTap</Link>
 
         <div className="flex items-center gap-4" ref={menuRef}>
-
           {!user ? (
             <>
               <Link href="/login" className="font-medium hover:text-blue-600">Login</Link>
@@ -90,12 +86,9 @@ export default function TopNav() {
                   Client Area
                   <span className={`w-3 h-3 border-r-2 border-b-2 border-black transform transition ${showClientArea ? "rotate-45" : "-rotate-45"}`}></span>
                 </button>
-
                 {showClientArea && (
-                  <div className="dropdown-animate absolute mt-2 bg-white shadow rounded p-2 w-44">
-                    <Link href="/check-imei" className="block px-3 py-1 hover:bg-gray-100 rounded">
-                      Free IMEI Check
-                    </Link>
+                  <div className="absolute mt-2 bg-white shadow rounded p-2 w-44">
+                    <Link href="/check-imei" className="block px-3 py-1 hover:bg-gray-100 rounded">Free IMEI Check</Link>
                   </div>
                 )}
               </div>
@@ -113,9 +106,8 @@ export default function TopNav() {
                   Place Order
                   <span className={`w-3 h-3 border-r-2 border-b-2 border-black transform transition ${showPlaceOrder ? "rotate-45" : "-rotate-45"}`}></span>
                 </button>
-
                 {showPlaceOrder && (
-                  <div className="dropdown-animate absolute mt-2 bg-white shadow rounded p-2 w-52">
+                  <div className="absolute mt-2 bg-white shadow rounded p-2 w-52">
                     <Link href="/orders/imei-service" className="block px-3 py-1 hover:bg-gray-100 rounded">IMEI Service</Link>
                     <Link href="/orders/server-service" className="block px-3 py-1 hover:bg-gray-100 rounded">Server Service</Link>
                     <Link href="/orders/remote-service" className="block px-3 py-1 hover:bg-gray-100 rounded">Remote Service</Link>
@@ -136,9 +128,8 @@ export default function TopNav() {
                   Order History
                   <span className={`w-3 h-3 border-r-2 border-b-2 border-black transform transition ${showOrderHistory ? "rotate-45" : "-rotate-45"}`}></span>
                 </button>
-
                 {showOrderHistory && (
-                  <div className="dropdown-animate absolute mt-2 bg-white shadow rounded p-2 w-56">
+                  <div className="absolute mt-2 bg-white shadow rounded p-2 w-56">
                     <Link href="/history/imei-orders" className="block px-3 py-1 hover:bg-gray-100 rounded">IMEI Orders</Link>
                     <Link href="/history/server-orders" className="block px-3 py-1 hover:bg-gray-100 rounded">Server Orders</Link>
                     <Link href="/history/remote-orders" className="block px-3 py-1 hover:bg-gray-100 rounded">Remote Orders</Link>
@@ -148,17 +139,20 @@ export default function TopNav() {
                 )}
               </div>
 
-              {/* USER */}
+              {/* USER PROFILE + DROPDOWN */}
               <div className="relative">
                 <button
                   onClick={() => toggleDropdown("user")}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                 >
+                  {user.photoURL && (
+                    <img src={user.photoURL} alt="Profile" className="w-6 h-6 rounded-full object-cover" />
+                  )}
                   {user.displayName || user.email} ▾
                 </button>
 
                 {openDropdown === "user" && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-60 bg-white shadow-lg rounded-md py-2 z-50">
                     <Link href="/dashboard/profile" className="block px-4 py-2 hover:bg-gray-100">My Profile</Link>
                     <Link href="/dashboard/add-funds" className="block px-4 py-2 hover:bg-gray-100">Add Funds</Link>
                     <Link href="/dashboard/invoice" className="block px-4 py-2 hover:bg-gray-100">My Invoice</Link>
