@@ -1,3 +1,8 @@
 export default function InstallApp() {
-  return null;
+  return (
+    <div>
+      <h1>Install App</h1>
+      {/* Mete kontni ou la */}
+    </div>
+  );
 }
