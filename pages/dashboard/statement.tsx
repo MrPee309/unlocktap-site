@@ -1,3 +1,8 @@
 export default function Statement() {
-  return null;
+  return (
+    <div>
+      <h1>Statement</h1>
+      {/* Mete kontni ou la */}
+    </div>
+  );
 }
