@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { getAuth } from "firebase/auth";
-import { app } from "../lib/firebaseClient"; // ✔️ import lokal (pa itilize @ pou evite erè)
+import { app } from "@/lib/firebaseClient";
 
 export default function OrderStatusTest() {
   const [orderId, setOrderId] = useState("");
@@ -41,36 +41,19 @@ export default function OrderStatusTest() {
     <main style={{ maxWidth: 640, margin: "32px auto", padding: 16 }}>
       <h1>Order Status Test</h1>
 
-      <label style={{ display: "block", marginBottom: 8 }}>
-        Order ID
-        <input
-          value={orderId}
-          onChange={(e) => setOrderId(e.target.value)}
-          placeholder="enter order id"
-          style={{
-            display: "block",
-            width: "100%",
-            padding: 8,
-            marginTop: 4,
-          }}
-        />
-      </label>
+      <input
+        value={orderId}
+        onChange={(e) => setOrderId(e.target.value)}
+        placeholder="enter order id"
+        style={{ width: "100%", padding: 8, marginBottom: 8 }}
+      />
 
       <button onClick={checkStatus} disabled={loading || !orderId}>
         {loading ? "Checking..." : "Check Status"}
       </button>
 
       {result && (
-        <pre
-          style={{
-            whiteSpace: "pre-wrap",
-            background: "#111",
-            color: "#0f0",
-            padding: 12,
-            marginTop: 16,
-            borderRadius: 6,
-          }}
-        >
+        <pre style={{ marginTop: 16 }}>
           {result}
         </pre>
       )}
