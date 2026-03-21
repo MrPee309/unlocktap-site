@@ -1,12 +1,11 @@
 // pages/order-status-test.tsx
-// Patched: import from '@/lib/firebaseClient' instead of '../lib/firebase'
 
-import { useState } from 'react';
-import { getAuth } from 'firebase/auth';
-import { app } from '@/lib/firebaseClient';
+import { useState } from "react";
+import { getAuth } from "firebase/auth";
+import { app } from "../lib/firebaseClient"; // ✔️ import lokal (pa itilize @ pou evite erè)
 
 export default function OrderStatusTest() {
-  const [orderId, setOrderId] = useState('');
+  const [orderId, setOrderId] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -15,12 +14,15 @@ export default function OrderStatusTest() {
   async function checkStatus() {
     try {
       setLoading(true);
-      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
 
-      const res = await fetch('/api/order-status', {
-        method: 'POST',
+      const token = auth.currentUser
+        ? await auth.currentUser.getIdToken()
+        : null;
+
+      const res = await fetch("/api/order-status", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ orderId }),
@@ -36,22 +38,39 @@ export default function OrderStatusTest() {
   }
 
   return (
-    <main style={{maxWidth: 640, margin: '32px auto', padding: 16}}>
+    <main style={{ maxWidth: 640, margin: "32px auto", padding: 16 }}>
       <h1>Order Status Test</h1>
-      <label style={{display: 'block', marginBottom: 8}}>
+
+      <label style={{ display: "block", marginBottom: 8 }}>
         Order ID
         <input
           value={orderId}
           onChange={(e) => setOrderId(e.target.value)}
           placeholder="enter order id"
-          style={{display:'block', width:'100%', padding:8, marginTop:4}}
+          style={{
+            display: "block",
+            width: "100%",
+            padding: 8,
+            marginTop: 4,
+          }}
         />
       </label>
+
       <button onClick={checkStatus} disabled={loading || !orderId}>
-        {loading ? 'Checking...' : 'Check Status'}
+        {loading ? "Checking..." : "Check Status"}
       </button>
+
       {result && (
-        <pre style={{whiteSpace:'pre-wrap', background:'#111', color:'#0f0', padding:12, marginTop:16, borderRadius:6}}>
+        <pre
+          style={{
+            whiteSpace: "pre-wrap",
+            background: "#111",
+            color: "#0f0",
+            padding: 12,
+            marginTop: 16,
+            borderRadius: 6,
+          }}
+        >
           {result}
         </pre>
       )}
