@@ -1,3 +1,3 @@
 export default function Statement() {
-  return <div />;
+  return null;
 }
