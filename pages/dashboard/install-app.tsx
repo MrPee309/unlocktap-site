@@ -1,3 +1,3 @@
 export default function InstallApp() {
-  return <div />;
+  return null;
 }
