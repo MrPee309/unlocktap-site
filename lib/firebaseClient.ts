@@ -1,3 +1,5 @@
+// lib/firebaseClient.ts
+
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -11,6 +13,9 @@ const firebaseConfig = {
 export const app = !getApps().length
   ? initializeApp(firebaseConfig)
   : getApps()[0];
+
+// 🔥 export app (double safety)
+export { app };
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
