@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { auth } from "../lib/firebaseClient";
+import { auth } from "@/lib/firebaseClient"; // ✅ chanje path pou @
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 
 export default function TopNav() {
@@ -14,7 +14,7 @@ export default function TopNav() {
   const [showOrderHistory, setShowOrderHistory] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
-  let hoverTimeout: any;
+  const hoverTimeout = useRef<any>(null); // ✅ fix timeout bug
 
   // Mete user apre login
   useEffect(() => {
@@ -39,15 +39,15 @@ export default function TopNav() {
 
   const handleEnter = (set: any) => {
     if (window.innerWidth > 768) {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(() => set(true), 120);
+      clearTimeout(hoverTimeout.current);
+      hoverTimeout.current = setTimeout(() => set(true), 120);
     }
   };
 
   const handleLeave = (set: any) => {
     if (window.innerWidth > 768) {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(() => set(false), 120);
+      clearTimeout(hoverTimeout.current);
+      hoverTimeout.current = setTimeout(() => set(false), 120);
     }
   };
 
@@ -139,16 +139,16 @@ export default function TopNav() {
                 )}
               </div>
 
-              {/* USER PROFILE + DROPDOWN */}
+              {/* USER PROFILE */}
               <div className="relative">
                 <button
                   onClick={() => toggleDropdown("user")}
                   className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                 >
-                  {user.photoURL && (
+                  {user?.photoURL && (
                     <img src={user.photoURL} alt="Profile" className="w-6 h-6 rounded-full object-cover" />
                   )}
-                  {user.displayName || user.email} ▾
+                  {user?.displayName || user?.email} ▾
                 </button>
 
                 {openDropdown === "user" && (
