@@ -1,18 +1,12 @@
-
 "use client";
 
-// pages/order-status-test.tsx
-
 import { useState } from "react";
-import { getAuth } from "firebase/auth";
-import { app } from "@/lib/firebaseClient";
+import { auth } from "@/lib/firebaseClient"; // ✅ mete import yo ANWO SELMAN
 
 export default function OrderStatusTest() {
   const [orderId, setOrderId] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  import { auth } from "@/lib/firebaseClient";
 
   async function checkStatus() {
     try {
@@ -60,6 +54,9 @@ export default function OrderStatusTest() {
           {result}
         </pre>
       )}
+    </main>
+  );
+}
     </main>
   );
 }/ Existing code should remain unchanged. Copy and paste the rest of the content below this line. For example:
