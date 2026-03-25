@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "@/lib/firebaseClient"; // ✅ mete import yo ANWO SELMAN
+import { auth } from "@/lib/firebaseClient";
 
 export default function OrderStatusTest() {
   const [orderId, setOrderId] = useState("");
@@ -49,18 +49,7 @@ export default function OrderStatusTest() {
         {loading ? "Checking..." : "Check Status"}
       </button>
 
-      {result && (
-        <pre style={{ marginTop: 16 }}>
-          {result}
-        </pre>
-      )}
+      {result && <pre style={{ marginTop: 16 }}>{result}</pre>}
     </main>
   );
 }
-    </main>
-  );
-}/ Existing code should remain unchanged. Copy and paste the rest of the content below this line. For example:
-
-// import React from 'react';
-// ...
-
