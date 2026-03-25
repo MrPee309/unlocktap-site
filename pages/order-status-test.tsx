@@ -12,7 +12,7 @@ export default function OrderStatusTest() {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const auth = getAuth(app);
+  import { auth } from "@/lib/firebaseClient";
 
   async function checkStatus() {
     try {
