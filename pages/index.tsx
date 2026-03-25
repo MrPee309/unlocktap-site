@@ -1,5 +1,5 @@
 // pages/index.tsx
-import Head from "next/head";
+"use client";import Head from "next/head";
 
 import AnnouncementBar from "@/components/AnnouncementBar";
 import Hero from "@/components/Hero";
