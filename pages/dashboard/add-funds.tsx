@@ -1,6 +1,6 @@
 "use client";  
 
-default function AddFunds() {
+export default function AddFunds() {
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Add Funds</h1>
